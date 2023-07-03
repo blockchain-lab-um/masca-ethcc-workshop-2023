@@ -3,23 +3,55 @@
   "version": "0.1.0",
   "private": true,
   "scripts": {
-    "dev": "next dev",
     "build": "next build",
-    "start": "next start",
-    "lint": "next lint"
+    "postbuild": "next-sitemap --config=next-sitemap.config.js",
+    "build:docker": "pnpm build",
+    "dev": "next dev",
+    "lint": "pnpm lint:next && pnpm lint:tsc && pnpm lint:prettier && pnpm lint:stylelint",
+    "lint:fix": "next lint . --fix && prettier . --write",
+    "lint:next": "next lint",
+    "lint:prettier": "prettier . --check",
+    "lint:stylelint": "stylelint \"src/**/*.{css,scss}\"",
+    "lint:tsc": "tsc -p tsconfig.json --noEmit --incremental false",
+    "start": "next start"
   },
   "dependencies": {
+    "@metamask/detect-provider": "^2.0.0",
+    "@metamask/providers": "^10.2.0",
+    "@vercel/analytics": "^1.0.1",
+    "@vercel/og": "^0.5.8",
+    "clsx": "^1.2.1",
+    "next": "13.4.7",
+    "react": "18.2.0",
+    "react-dom": "18.2.0",
+    "tailwindcss": "3.3.2",
+    "zustand": "^4.3.8"
+  },
+  "devDependencies": {
+    "@commitlint/cli": "^17.6.6",
+    "@commitlint/config-conventional": "^17.6.6",
+    "@tailwindcss/typography": "^0.5.9",
     "@types/node": "20.3.3",
     "@types/react": "18.2.14",
     "@types/react-dom": "18.2.6",
     "autoprefixer": "10.4.14",
+    "cross-env": "^7.0.3",
     "eslint": "8.44.0",
     "eslint-config-next": "13.4.7",
-    "next": "13.4.7",
+    "eslint-config-prettier": "^8.8.0",
+    "eslint-plugin-tailwindcss": "^3.13.0",
+    "husky": "^8.0.3",
+    "lint-staged": "^13.2.3",
+    "next-sitemap": "^4.1.8",
     "postcss": "8.4.24",
-    "react": "18.2.0",
-    "react-dom": "18.2.0",
-    "tailwindcss": "3.3.2",
+    "prettier": "^2.8.8",
+    "prettier-plugin-organize-imports": "^3.2.2",
+    "prettier-plugin-packagejson": "^2.4.3",
+    "prettier-plugin-tailwindcss": "^0.3.0",
     "typescript": "5.1.6"
+  },
+  "packageManager": "pnpm@8.6.0",
+  "engines": {
+    "node": ">=18.16.0"
   }
 }
