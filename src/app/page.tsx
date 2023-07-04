@@ -70,7 +70,6 @@ export default function Home() {
     if (!api) {
       return;
     }
-    console.log('name', name);
 
     // Post request with fetch API
     const response = await fetch('/api/issue', {
@@ -81,7 +80,6 @@ export default function Home() {
       body: JSON.stringify({ name, password, did }),
     });
     const credential = await response.json();
-    console.log('response', credential);
 
     const saveResult = await api.saveVC(credential.credential, {
       store: 'snap',
@@ -120,7 +118,6 @@ export default function Home() {
     });
 
     const result = await response.json();
-    console.log('response', result);
 
     return result.valid;
   };
