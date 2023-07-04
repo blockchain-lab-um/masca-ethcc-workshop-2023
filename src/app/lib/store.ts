@@ -1,7 +1,7 @@
-import { useState, useEffect, SetStateAction } from 'react';
+import { useState, useEffect, SetStateAction, Dispatch } from 'react';
 import { createClient } from '@supabase/supabase-js';
 
-export interface User {
+export interface IUser {
   readonly id: number;
   username: string;
 }
@@ -9,7 +9,8 @@ export interface User {
 export interface IMessage {
   readonly id: number;
   message: string;
-  user?: User;
+  sender?: number;
+  user?: IUser;
 }
 
 const options = {
@@ -31,22 +32,24 @@ export const supabase = createClient(
 
 export const useSupabase = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
-  const [users] = useState<User[]>([]);
+  const [users, setUsers] = useState<IUser[]>([]);
   const [newMessage, handleNewMessage] = useState<IMessage | null>(null);
-  const [newOrUpdatedUser, handleNewOrUpdatedUser] = useState<User | null>(
+  const [newOrUpdatedUser, handleNewOrUpdatedUser] = useState<IUser | null>(
     null
   );
   // Load initial data and set up listeners
   useEffect(() => {
     fetchMessages(setMessages);
+    fetchUsers(setUsers);
     // Listen for new and deleted messages
     const messageListener = supabase
       .channel('public:messages')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) =>
-          handleNewMessage(payload.new as SetStateAction<IMessage | null>)
+        (payload) => {
+          handleNewMessage(payload.new as IMessage);
+        }
       )
       .subscribe();
     // Listen for changes to our users
@@ -55,8 +58,7 @@ export const useSupabase = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'users' },
-        (payload) =>
-          handleNewOrUpdatedUser(payload.new as SetStateAction<User | null>)
+        (payload) => handleNewOrUpdatedUser(payload.new as IUser)
       )
       .subscribe();
 
@@ -68,16 +70,16 @@ export const useSupabase = () => {
 
   // New message received from Postgres
   useEffect(() => {
+    console.log('newMessage', newMessage);
     if (newMessage && Object.keys(newMessage).length > 0) {
       const handleAsync = async () => {
-        // let authorId = newMessage.sender;
-        // if (!users.get(authorId))
-        //   await fetchUser(authorId, (user) => handleNewOrUpdatedUser(user));
-        setMessages(messages.concat(newMessage));
+        const user = users.find((user) => {
+          return user.id === newMessage.sender;
+        });
+        setMessages(messages.concat({ ...newMessage, user } as IMessage));
       };
       handleAsync();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newMessage as IMessage]);
 
   // New or updated user received from Postgres
@@ -88,24 +90,23 @@ export const useSupabase = () => {
   }, [newOrUpdatedUser]);
 
   return {
-    // We can export computed values here to map the authors to each message
     messages,
     users,
   };
 };
 
-export const fetchMessages = async (setState: any) => {
+export const fetchMessages = async (
+  setState: Dispatch<SetStateAction<IMessage[]>>
+) => {
   try {
     const { data: messages, error } = await supabase
       .from('messages')
       .select('*, user:users(username, id)')
       .order('created_at', { ascending: true });
-
     if (error) {
       console.log('error', error);
       return;
     }
-
     if (setState) setState(messages);
     return messages;
   } catch (error) {
@@ -113,11 +114,27 @@ export const fetchMessages = async (setState: any) => {
   }
 };
 
-export const addMessage = async (message: string, user_id: string) => {
+export const fetchUsers = async (
+  setState: Dispatch<SetStateAction<IUser[]>>
+) => {
+  try {
+    const { data: users, error } = await supabase.from('users').select('*');
+    if (error) {
+      console.log('error', error);
+      return;
+    }
+    if (setState) setState(users);
+    return users;
+  } catch (error) {
+    console.log('error', error);
+  }
+};
+
+export const addMessage = async (message: string, sender: number) => {
   try {
     let { data } = await supabase
       .from('messages')
-      .insert([{ message, user_id }])
+      .insert([{ message, sender }])
       .select();
     return data;
   } catch (error) {

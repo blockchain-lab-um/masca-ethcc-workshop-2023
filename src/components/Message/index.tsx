@@ -1,4 +1,4 @@
-import { IMessage } from '@/app/lib/supabase';
+import { IMessage } from '@/app/lib/store';
 
 export const Message = ({ message }: { message: IMessage }) => {
   return (
