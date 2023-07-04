@@ -66,7 +66,7 @@ export const useSupabase = () => {
 
   // New message received from Postgres
   useEffect(() => {
-    if (newMessage) {
+    if (newMessage && Object.keys(newMessage).length > 0) {
       const handleAsync = async () => {
         // let authorId = newMessage.sender;
         // if (!users.get(authorId))
@@ -90,20 +90,6 @@ export const useSupabase = () => {
     messages,
     users,
   };
-};
-
-export const fetchUser = async (userId: string, setState: any) => {
-  try {
-    let { data } = (await supabase
-      .from('users')
-      .select(`*`)
-      .eq('id', userId)) as any;
-    let user = data[0] || '';
-    if (setState) setState(user);
-    return user;
-  } catch (error) {
-    console.log('error', error);
-  }
 };
 
 export const fetchMessages = async (setState: any) => {
