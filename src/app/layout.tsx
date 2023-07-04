@@ -1,6 +1,5 @@
 import '../styles/globals.css';
 
-import AnalyticsWrapper from '@/components/AnalyticsWrapper';
 import { Metadata } from 'next';
 import { Inter } from 'next/font/google';
 
@@ -60,7 +59,6 @@ export default function RootLayout({
       </head>
       <body className={inter.className}>
         <main>{children}</main>
-        <AnalyticsWrapper />
       </body>
     </html>
   );
