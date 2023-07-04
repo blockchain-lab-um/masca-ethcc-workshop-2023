@@ -32,8 +32,10 @@ export const supabase = createClient(
 export const useSupabase = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [users] = useState<User[]>([]);
-  const [newMessage, handleNewMessage] = useState<IMessage>({} as IMessage);
-  const [newOrUpdatedUser, handleNewOrUpdatedUser] = useState<User>({} as User);
+  const [newMessage, handleNewMessage] = useState<IMessage | null>(null);
+  const [newOrUpdatedUser, handleNewOrUpdatedUser] = useState<User | null>(
+    null
+  );
   // Load initial data and set up listeners
   useEffect(() => {
     fetchMessages(setMessages);
@@ -43,7 +45,8 @@ export const useSupabase = () => {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) => handleNewMessage(payload.new as SetStateAction<IMessage>)
+        (payload) =>
+          handleNewMessage(payload.new as SetStateAction<IMessage | null>)
       )
       .subscribe();
     // Listen for changes to our users
@@ -52,7 +55,8 @@ export const useSupabase = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'users' },
-        (payload) => handleNewOrUpdatedUser(payload.new as SetStateAction<User>)
+        (payload) =>
+          handleNewOrUpdatedUser(payload.new as SetStateAction<User | null>)
       )
       .subscribe();
 
