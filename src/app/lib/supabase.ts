@@ -94,20 +94,6 @@ export const useSupabase = () => {
   };
 };
 
-export const fetchUser = async (userId: string, setState: any) => {
-  try {
-    let { data } = (await supabase
-      .from('users')
-      .select(`*`)
-      .eq('id', userId)) as any;
-    let user = data[0] || '';
-    if (setState) setState(user);
-    return user;
-  } catch (error) {
-    console.log('error', error);
-  }
-};
-
 export const fetchMessages = async (setState: any) => {
   try {
     const { data: messages, error } = await supabase
