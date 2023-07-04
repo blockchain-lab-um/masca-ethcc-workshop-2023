@@ -10,10 +10,10 @@ export const metadata: Metadata = {
   metadataBase: new URL('https://ethcc.masca.io'),
   title: {
     default: 'Masca',
-    template: '%s | EthCC Masca',
+    template: '%s | EthCC[6] Masca',
   },
   description: '',
-  keywords: [],
+  keywords: ['ethcc', 'masca', 'decentralized identity'],
   openGraph: {
     title: 'Masca EthCC Workshop',
     description: '',
