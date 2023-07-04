@@ -1,9 +1,40 @@
 import { NextResponse } from 'next/server';
+import { getAgent } from '../veramoSetup';
+import { MinimalImportableKey } from '@veramo/core';
+
+const address = '0x5c74DbEf6e5cA7eCBA05de2a1A1eE65b7D662ffF';
+const pk = 'acb96d1a413eea8e2ff39d6675e39fd1f7d78629c057e1fba1f0cc9dafb7e1f4';
+const issuer = `did:ethr:mainnet:${address}`;
 
 export async function POST(request: Request) {
+  const { vp } = await request.json();
+  const agent = await getAgent();
+
+  console.log(vp);
+
+  let valid = false;
+  const res = await agent.verifyPresentation({ presentation: vp });
+  console.log(res);
+  if (res.verified) {
+    console.log('verified');
+
+    const decodedVC = JSON.parse(
+      atob(vp.verifiableCredential[0].split('.')[1])
+    );
+    console.log(decodedVC);
+
+    if (
+      vp.holder === decodedVC.sub &&
+      decodedVC.iss === issuer &&
+      decodedVC.vc.type[1] === 'MascaWorkshopPOAP'
+    ) {
+      valid = true;
+    }
+  }
+
   return NextResponse.json(
     {
-      message: 'Hello from the Verifier',
+      valid: valid,
     },
     {
       status: 200,
