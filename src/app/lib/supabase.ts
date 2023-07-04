@@ -43,8 +43,7 @@ export const useSupabase = () => {
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
-        (payload) =>
-          handleNewMessage(payload.new as unknown as SetStateAction<IMessage>)
+        (payload) => handleNewMessage(payload.new as SetStateAction<IMessage>)
       )
       .subscribe();
     // Listen for changes to our users
@@ -53,8 +52,7 @@ export const useSupabase = () => {
       .on(
         'postgres_changes',
         { event: '*', schema: 'public', table: 'users' },
-        (payload) =>
-          handleNewOrUpdatedUser(payload.new as unknown as SetStateAction<User>)
+        (payload) => handleNewOrUpdatedUser(payload.new as SetStateAction<User>)
       )
       .subscribe();
 
@@ -66,7 +64,7 @@ export const useSupabase = () => {
 
   // New message received from Postgres
   useEffect(() => {
-    if (newMessage) {
+    if (newMessage && Object.keys(newMessage).length > 0) {
       const handleAsync = async () => {
         // let authorId = newMessage.sender;
         // if (!users.get(authorId))
@@ -76,7 +74,7 @@ export const useSupabase = () => {
       handleAsync();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newMessage as unknown as IMessage]);
+  }, [newMessage as IMessage]);
 
   // New or updated user received from Postgres
   useEffect(() => {
