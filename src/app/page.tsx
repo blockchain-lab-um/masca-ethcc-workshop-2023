@@ -110,7 +110,19 @@ export default function Home() {
       return;
     }
     console.log(vp);
-    return vp.data;
+
+    const response = await fetch('/api/verify', {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({ vp: vp.data }),
+    });
+
+    const result = await response.json();
+    console.log('response', result);
+
+    return result.valid;
   };
 
   const deleteVC = async (id: string) => {
@@ -123,6 +135,8 @@ export default function Home() {
       return;
     }
     console.log(deleteResult);
+
+    setVcs(vcs.filter((vc) => vc.metadata.id !== id));
   };
 
   return (

@@ -10,6 +10,7 @@ import {
   type TAgent,
   IKey,
 } from '@veramo/core';
+import { CredentialIssuerEIP712 } from '@veramo/credential-eip712';
 import {
   CredentialPlugin,
   type ICredentialIssuer,
@@ -29,6 +30,7 @@ import {
 import { KeyManagementSystem } from '@veramo/kms-local';
 import { Resolver } from 'did-resolver';
 import { getResolver as ethrDidResolver } from 'ethr-did-resolver';
+import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
 
 export type Agent = TAgent<
   IDIDManager &
@@ -39,7 +41,34 @@ export type Agent = TAgent<
     ICredentialVerifier
 >;
 
-const INFURA_PROJECT_ID = 'da2069d93bdf491f992fb8cae21ba41b';
+const networks = [
+  {
+    name: 'mainnet',
+    provider: new JsonRpcProvider(
+      'https://mainnet.infura.io/v3/bf246ad3028f42318f2e996a7aa85bfc'
+    ),
+  },
+  {
+    name: '0x05',
+    provider: new JsonRpcProvider(
+      'https://goerli.infura.io/v3/bf246ad3028f42318f2e996a7aa85bfc'
+    ),
+  },
+  {
+    name: 'goerli',
+    provider: new JsonRpcProvider(
+      'https://goerli.infura.io/v3/bf246ad3028f42318f2e996a7aa85bfc'
+    ),
+    chainId: '0x5',
+  },
+  {
+    name: 'sepolia',
+    provider: new JsonRpcProvider(
+      'https://sepolia.infura.io/v3/bf246ad3028f42318f2e996a7aa85bfc'
+    ),
+    chainId: '0xaa36a7',
+  },
+];
 
 export const getAgent = async (): Promise<Agent> => {
   const agent = createAgent<
@@ -52,15 +81,14 @@ export const getAgent = async (): Promise<Agent> => {
   >({
     plugins: [
       new CredentialPlugin(),
+      new CredentialIssuerEIP712(),
       new DIDManager({
         store: new MemoryDIDStore(),
-        defaultProvider: 'did:ethr:rinkeby',
+        defaultProvider: 'did:ethr',
         providers: {
-          'did:ethr:rinkeby': new EthrDIDProvider({
+          'did:ethr': new EthrDIDProvider({
             defaultKms: 'local',
-            network: 'rinkeby',
-            rpcUrl: 'https://rinkeby.infura.io/v3/' + INFURA_PROJECT_ID,
-            gas: 1000001,
+            networks,
           }),
         },
       }),
@@ -72,7 +100,7 @@ export const getAgent = async (): Promise<Agent> => {
       }),
       new DIDResolverPlugin({
         resolver: new Resolver({
-          ...ethrDidResolver({ infuraProjectId: INFURA_PROJECT_ID }),
+          ...ethrDidResolver({ networks }),
         }),
       }),
     ],
