@@ -83,6 +83,9 @@ dependencies:
   tailwindcss:
     specifier: 3.3.2
     version: 3.3.2(ts-node@10.9.1)
+  uniqolor:
+    specifier: ^1.1.0
+    version: 1.1.0
   zustand:
     specifier: ^4.3.8
     version: 4.3.8(react@18.2.0)
@@ -12235,6 +12238,10 @@ packages:
     dependencies:
       pako: 0.2.9
       tiny-inflate: 1.0.3
+    dev: false
+
+  /uniqolor@1.1.0:
+    resolution: {integrity: sha512-j2XyokF24fsj+L5u6fbu4rM3RQc6VWJuAngYM2k0ZdG3yiVxt0smLkps2GmQIYqK8VkELGdM9vFU/HfOkK/zoQ==}
     dev: false
 
   /unique-filename@1.1.1:

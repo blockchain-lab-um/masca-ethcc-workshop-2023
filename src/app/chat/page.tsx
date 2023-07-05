@@ -5,27 +5,30 @@ import Message from '@/components/Message';
 import { MessageInput } from '@/components/MessageInput';
 import type { IMessage } from '@/types/messages.types';
 import type { IUser } from '@/types/user.types';
-import { useStore, addMessage } from '../lib/supabase';
+import { useSupabaseStore, addMessage } from '../lib/supabase';
 import { useUserStore } from '../lib/store';
 import { useEffect, useRef } from 'react';
+import { Navbar } from '@/components/Navbar';
+import { UserList } from '@/components/UserList';
 
 export default function Chat(props: any) {
   const router = useRouter();
   const { messages, users }: { messages: IMessage[]; users: IUser[] } =
-    useStore();
+    useSupabaseStore();
   const {
     username,
     authenticated,
     id: userId,
+    did,
   } = useUserStore((state) => ({
     username: state.username,
     authenticated: state.authenticated,
     id: state.id,
+    did: state.did,
   }));
   const messagesEndRef = useRef<HTMLDivElement>(null);
 
   useEffect(() => {
-    console.log('user', username);
     if (typeof window !== 'undefined' && !authenticated) {
       router.push('/');
     }
@@ -44,23 +47,31 @@ export default function Chat(props: any) {
   };
 
   return (
-    <div>
+    <div className="flex h-screen flex-col">
+      <Navbar
+        connect={() => {}}
+        username={username}
+        connected={true}
+        did={did}
+      />
       {authenticated && (
-        <div className="flex h-screen">
-          <div className="h-full pb-16">
-            <div className="overflow-y-auto p-2">
-              {messages.length !== 0 &&
-                messages.map((message) => (
+        <div className="flex-1 overflow-y-auto p-2">
+          <div className="flex">
+            <div className="flex-1">
+              <div className="mb-auto">
+                {messages.map((message) => (
                   <Message key={message.id} message={message} />
                 ))}
-              <div ref={messagesEndRef} style={{ height: 0 }} />
+                <div ref={messagesEndRef} />
+              </div>
             </div>
-            <div className="absolute bottom-0 left-0 w-full p-2">
-              <MessageInput onSubmit={postMessage} />
-            </div>
+            <UserList users={users} />
           </div>
         </div>
       )}
+      <div className="sticky bottom-0 left-0 w-full p-2">
+        <MessageInput disabled={!authenticated} onSubmit={postMessage} />
+      </div>
     </div>
   );
 }

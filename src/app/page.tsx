@@ -4,15 +4,11 @@ import { VCCard } from '@/components/VCCard';
 import { enableMasca } from '@blockchain-lab-um/masca-connector';
 import type { QueryVCsRequestResult } from '@blockchain-lab-um/masca-types';
 import { isError } from '@blockchain-lab-um/utils';
-import type {
-  VerifiableCredential,
-  W3CVerifiableCredential,
-} from '@veramo/core';
+import type { W3CVerifiableCredential } from '@veramo/core';
 import { useEffect, useState } from 'react';
 import { useUserStore } from './lib/store';
 import { useRouter } from 'next/navigation';
-import { doesExist, insertOrGetUser } from './lib/supabase';
-import { IUser } from '@/types/user.types';
+import { insertOrGetUser } from './lib/supabase';
 
 export default function Home() {
   const {

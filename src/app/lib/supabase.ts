@@ -20,7 +20,7 @@ export const supabase = createClient(
   options
 );
 
-export const useStore = () => {
+export const useSupabaseStore = () => {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
   const [newMessage, handleNewMessage] = useState<IMessage | null>(null);

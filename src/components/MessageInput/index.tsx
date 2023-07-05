@@ -1,6 +1,7 @@
 import { useState } from 'react';
 
 interface IMessageInputProps {
+  disabled: boolean;
   onSubmit: (text: string) => Promise<void>;
 }
 export const MessageInput = (props: IMessageInputProps) => {
@@ -14,7 +15,8 @@ export const MessageInput = (props: IMessageInputProps) => {
   };
   return (
     <input
-      className="w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:bg-blue-300 focus:outline-none"
+      disabled={props.disabled}
+      className="w-full appearance-none rounded border bg-opacity-100 px-3 py-2 leading-tight text-gray-700 shadow focus:bg-blue-300 focus:outline-none"
       type="text"
       placeholder="Send a message"
       value={messageText}
