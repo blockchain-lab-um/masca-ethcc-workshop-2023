@@ -11,7 +11,6 @@ export async function POST(request: Request) {
   const agent = await getAgent();
   const controllerKeyId = 'key-1';
   const method = 'did:ethr';
-  console.log('importing issuer');
   const issuerDid = await agent.didManagerImport({
     did: `did:ethr:mainnet:${address}`,
     provider: method,
@@ -25,7 +24,6 @@ export async function POST(request: Request) {
       } as MinimalImportableKey,
     ],
   });
-  console.log('Creating VC with issuer DID', issuerDid.did);
   const vc = await agent.createVerifiableCredential({
     credential: {
       issuer: { id: issuerDid.did },
@@ -38,8 +36,6 @@ export async function POST(request: Request) {
     },
     proofFormat: 'jwt',
   });
-
-  console.log(vc);
 
   return NextResponse.json(
     {

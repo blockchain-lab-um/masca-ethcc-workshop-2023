@@ -60,7 +60,6 @@ export const useStore = () => {
 
   // New message received from Postgres
   useEffect(() => {
-    console.log('newMessage', newMessage);
     if (newMessage && Object.keys(newMessage).length > 0) {
       const handleAsync = async () => {
         const user = users.find((user) => {

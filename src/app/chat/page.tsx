@@ -41,7 +41,6 @@ export default function Chat(props: any) {
 
   const postMessage = async (text: string) => {
     addMessage({ message: text, sender: userId as number });
-    console.log('🚀 ~ file: page.tsx:45 ~ postMessage ~ userId: ', userId);
   };
 
   return (

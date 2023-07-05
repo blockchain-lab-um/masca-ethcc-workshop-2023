@@ -48,7 +48,6 @@ export default function Home() {
     const handleVcsChange = async (vcs: QueryVCsRequestResult[]) => {
       setHasValidVc(false);
       vcs.forEach((vc) => {
-        console.log('checking');
         if (vc.data?.type?.includes('MascaWorkshopPOAP')) {
           setHasValidVc(true);
           return;
@@ -181,8 +180,6 @@ export default function Home() {
       setUser(user);
       setAuthenticated(true);
       router.push('/chat');
-      console.log('Generated VP: ', JSON.stringify(vp.data, null, 2));
-      return result.valid;
     }
     console.log('Generated VP: ', JSON.stringify(vp.data, null, 2));
     return result.valid;

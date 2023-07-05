@@ -10,14 +10,9 @@ export async function POST(request: Request) {
   const { vp } = await request.json();
   const agent = await getAgent();
 
-  console.log(vp);
-
   let valid = false;
   const res = await agent.verifyPresentation({ presentation: vp });
-  console.log(res);
   if (res.verified) {
-    console.log('verified');
-
     const decodedVerifiableCredential = JSON.parse(
       atob(vp.verifiableCredential[0].split('.')[1])
     );
