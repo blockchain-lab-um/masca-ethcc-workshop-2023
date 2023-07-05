@@ -2,32 +2,67 @@
 import { Navbar } from '@/components/Navbar';
 import { VCCard } from '@/components/VCCard';
 import { enableMasca } from '@blockchain-lab-um/masca-connector';
-import {
-  MascaApi,
-  QueryVCsRequestResult,
-} from '@blockchain-lab-um/masca-types';
+import type { QueryVCsRequestResult } from '@blockchain-lab-um/masca-types';
 import { isError } from '@blockchain-lab-um/utils';
-import {
+import type {
+  VerifiableCredential,
   W3CVerifiableCredential,
-  W3CVerifiablePresentation,
 } from '@veramo/core';
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
+import { useUserStore } from './lib/store';
+import { useRouter } from 'next/navigation';
+import { doesExist, insertOrGetUser } from './lib/supabase';
+import { IUser } from '@/types/user.types';
 
 export default function Home() {
-  const [api, setApi] = useState<MascaApi | null>(null);
+  const {
+    setUsername,
+    username,
+    setUser,
+    setAuthenticated,
+    setApi,
+    api,
+    setDid,
+    did,
+  } = useUserStore((state) => ({
+    username: state.username,
+    setUsername: state.setUsername,
+    setUser: state.setUser,
+
+    did: state.did,
+    setDid: state.setDid,
+
+    api: state.api,
+    setApi: state.setApi,
+
+    setAuthenticated: state.setAuthenticated,
+  }));
+  const router = useRouter();
   const [connected, setConnected] = useState(false);
+  const [hasValidVc, setHasValidVc] = useState(false);
   const [vcs, setVcs] = useState<QueryVCsRequestResult[]>([]);
   const [vcsQueried, setVcsQueried] = useState(false);
-  const [did, setDid] = useState<string>('');
-  const [name, setName] = useState<string>('');
   const [password, setPassword] = useState<string>('');
+
+  useEffect(() => {
+    const handleVcsChange = async (vcs: QueryVCsRequestResult[]) => {
+      setHasValidVc(false);
+      vcs.forEach((vc) => {
+        console.log('checking');
+        if (vc.data?.type?.includes('MascaWorkshopPOAP')) {
+          setHasValidVc(true);
+          return;
+        }
+      });
+    };
+    handleVcsChange(vcs);
+  }, [vcs]);
 
   const connect = async () => {
     const addresses = await window.ethereum.request({
       method: 'eth_requestAccounts',
     });
-
-    const masca = await enableMasca(addresses[0]);
+    const masca = await enableMasca((addresses as string[])[0]);
 
     if (isError(masca)) {
       console.error(masca.error);
@@ -59,7 +94,7 @@ export default function Home() {
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setName(e.target.value);
+    setUsername(e.target.value);
   };
 
   const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -71,13 +106,23 @@ export default function Home() {
       return;
     }
 
+    const { user, success, err } = await insertOrGetUser({
+      did,
+      username,
+    });
+    if (!success) {
+      alert(err);
+      return;
+    }
+    setUser(user);
+
     // Post request with fetch API
     const response = await fetch('/api/issue', {
       method: 'POST',
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name, password, did }),
+      body: JSON.stringify({ name: user.username, password, did }),
     });
     const credential = await response.json();
 
@@ -93,6 +138,7 @@ export default function Home() {
       ...vcs,
       { data: credential.credential, metadata: saveResult.data[0] },
     ]);
+    setHasValidVc(true);
   };
 
   const createVP = async (vc: W3CVerifiableCredential) => {
@@ -107,8 +153,12 @@ export default function Home() {
       console.error(vp.error);
       return;
     }
-    console.log(vp);
-
+    if (!vp.data.verifiableCredential) {
+      console.error(
+        'No VerifiableCredential found in the VerifiablePresentation'
+      );
+      return;
+    }
     const response = await fetch('/api/verify', {
       method: 'POST',
       headers: {
@@ -119,6 +169,22 @@ export default function Home() {
 
     const result = await response.json();
 
+    if (result.valid) {
+      const { user, success, err } = await insertOrGetUser({
+        did,
+        username,
+      });
+      if (!success) {
+        alert(err);
+        return;
+      }
+      setUser(user);
+      setAuthenticated(true);
+      router.push('/chat');
+      console.log('Generated VP: ', JSON.stringify(vp.data, null, 2));
+      return result.valid;
+    }
+    console.log('Generated VP: ', JSON.stringify(vp.data, null, 2));
     return result.valid;
   };
 
@@ -131,28 +197,17 @@ export default function Home() {
       console.error(deleteResult.error);
       return;
     }
-    console.log(deleteResult);
 
     setVcs(vcs.filter((vc) => vc.metadata.id !== id));
   };
 
   return (
-    <div className="w-full h-full">
+    <div className="h-full w-full">
       <Navbar connect={connect} connected={connected} did={did} />
-      {connected && !vcsQueried && (
-        <div className="flex justify-center p-16">
-          <button
-            className="p-2 font-semibold text-gray-800 transition-all bg-white rounded-lg hover:bg-white/60"
-            onClick={queryVCs}
-          >
-            Query VCs
-          </button>
-        </div>
-      )}
-      {connected && vcsQueried && vcs.length === 0 && (
+      {connected && vcsQueried && !hasValidVc && (
         <div className="flex flex-col items-center justify-center p-16">
-          <div className="text-xl font-semibold">Get your first VC</div>
-          <div className="p-2 mt-4">
+          <div className="text-xl font-semibold">Get your Workshop VC</div>
+          <div className="mt-4 p-2">
             <div className="flex justify-end gap-x-2">
               <label className="font-semibold text-gray-300">Name</label>
               <input
@@ -161,7 +216,7 @@ export default function Home() {
                 type="text"
               />
             </div>
-            <div className="flex justify-end mt-4 gap-x-2">
+            <div className="mt-4 flex justify-end gap-x-2">
               <label className="font-semibold text-gray-300">Password</label>
               <input
                 onChange={handlePasswordChange}
@@ -172,9 +227,19 @@ export default function Home() {
           </div>
           <button
             onClick={getVC}
-            className="p-2 mt-2 font-semibold transition-all bg-orange-500 rounded-lg text-slate-100 hover:bg-orange-500/80"
+            className="mt-2 rounded-lg bg-orange-500 p-2 font-semibold text-slate-100 transition-all hover:bg-orange-500/80"
           >
-            Get your first VC
+            Get VC
+          </button>
+        </div>
+      )}
+      {connected && !vcsQueried && (
+        <div className="flex justify-center p-16">
+          <button
+            className="rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60"
+            onClick={queryVCs}
+          >
+            Query VCs
           </button>
         </div>
       )}

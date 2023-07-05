@@ -16,8 +16,8 @@
     "start": "next build && next start"
   },
   "dependencies": {
-    "@blockchain-lab-um/masca-connector": "^0.3.0",
-    "@blockchain-lab-um/masca-types": "^0.3.0",
+    "@blockchain-lab-um/masca-connector": "^0.3.1",
+    "@blockchain-lab-um/masca-types": "^0.3.1",
     "@blockchain-lab-um/utils": "^1.2.0",
     "@ethersproject/providers": "^5.7.2",
     "@metamask/detect-provider": "^2.0.0",

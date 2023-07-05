@@ -8,13 +8,13 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://ethcc.masca.io'),
   title: {
-    default: 'Masca',
-    template: '%s | EthCC[6] Masca',
+    default: 'Masca EthCC[6]',
+    template: '%s | Masca EthCC[6] ',
   },
   description: '',
   keywords: ['ethcc', 'masca', 'decentralized identity'],
   openGraph: {
-    title: 'Masca EthCC Workshop',
+    title: 'Masca EthCC[6] Workshop',
     description: '',
     locale: 'en_US',
     url: 'https://ethcc.masca.io',

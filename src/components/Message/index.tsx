@@ -1,4 +1,4 @@
-import { IMessage } from '@/app/lib/store';
+import type { IMessage } from '@/types/messages.types';
 
 export const Message = ({ message }: { message: IMessage }) => {
   return (

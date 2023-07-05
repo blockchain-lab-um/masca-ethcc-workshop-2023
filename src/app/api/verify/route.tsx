@@ -18,15 +18,14 @@ export async function POST(request: Request) {
   if (res.verified) {
     console.log('verified');
 
-    const decodedVC = JSON.parse(
+    const decodedVerifiableCredential = JSON.parse(
       atob(vp.verifiableCredential[0].split('.')[1])
     );
-    console.log(decodedVC);
 
     if (
-      vp.holder === decodedVC.sub &&
-      decodedVC.iss === issuer &&
-      decodedVC.vc.type[1] === 'MascaWorkshopPOAP'
+      vp.holder === decodedVerifiableCredential.sub &&
+      decodedVerifiableCredential.iss === issuer &&
+      decodedVerifiableCredential.vc.type[1] === 'MascaWorkshopPOAP'
     ) {
       valid = true;
     }
