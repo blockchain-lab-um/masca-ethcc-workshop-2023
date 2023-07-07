@@ -30,9 +30,7 @@ export const useSupabaseStore = (params: {
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
   const [newMessage, handleNewMessage] = useState<IMessage | null>(null);
-  const [newOrUpdatedUser, handleNewOrUpdatedUser] = useState<IUser | null>(
-    null
-  );
+  const [newUser, handleNewOrUpdatedUser] = useState<IUser | null>(null);
   // Load initial data and set up listeners
   useEffect(() => {
     const handleAsync = async () => {
@@ -72,7 +70,7 @@ export const useSupabaseStore = (params: {
       .channel('public:users')
       .on(
         'postgres_changes',
-        { event: '*', schema: 'public', table: 'users' },
+        { event: 'INSERT', schema: 'public', table: 'users' },
         (payload) => handleNewOrUpdatedUser(payload.new as IUser)
       )
       .subscribe();
@@ -99,9 +97,7 @@ export const useSupabaseStore = (params: {
           user: { username: newMessage.senderDid },
         } as IMessage;
       }
-      console.log('Before setting msg');
       setMessages(messages.concat(msg));
-      console.log('After setting msg');
     };
     if (newMessage && Object.keys(newMessage).length > 0) {
       handleAsync();
@@ -111,10 +107,10 @@ export const useSupabaseStore = (params: {
 
   // New or updated user received from Postgres
   useEffect(() => {
-    // TODO: use map instead of array
-    if (newOrUpdatedUser) users.push(newOrUpdatedUser);
+    if (newUser) setUsers(users.concat(newUser));
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [newOrUpdatedUser]);
+  }, [newUser]);
 
   return {
     messages,
