@@ -54,7 +54,7 @@ export const Message = ({ message }: { message: IMessage }) => {
       <p className="text-xs text-gray-500">
         at {format(message.created_at || '')}
       </p>
-      <p className="w-full break-words text-white">{message.message}</p>
+      <p className="w-full break-all text-white">{message.message}</p>
     </div>
   );
 };
