@@ -8,7 +8,8 @@ import type { W3CVerifiableCredential } from '@veramo/core';
 import { useEffect, useState } from 'react';
 import { useUserStore } from './lib/store';
 import { useRouter } from 'next/navigation';
-import { insertOrGetUser } from './lib/supabase';
+import { getUserBy, insertOrGetUser } from './lib/supabase';
+import { ChannelList } from '@/components/ChannelList';
 
 export default function Home() {
   const {
@@ -72,6 +73,8 @@ export default function Home() {
       console.error(did.error);
       return;
     }
+    const user = await getUserBy({ col: 'did', value: did.data });
+    if (user) setUser(user);
     setDid(did.data);
   };
 
@@ -163,21 +166,7 @@ export default function Home() {
     });
 
     const result = await response.json();
-
-    if (result.valid) {
-      const { user, success, err } = await insertOrGetUser({
-        did,
-        username,
-      });
-      if (!success) {
-        alert(err);
-        return;
-      }
-      setUser(user);
-      setAuthenticated(true);
-      router.push('/chat');
-    }
-    console.log('Generated VP: ', JSON.stringify(vp.data, null, 2));
+    console.log('Generated VP: ', vp.data);
     return result.valid;
   };
 
@@ -194,38 +183,46 @@ export default function Home() {
     setVcs(vcs.filter((vc) => vc.metadata.id !== id));
   };
 
+  // An example on how to ask for VP from a VC, and give special permissions based on that.
+  // In this case, if the user has a VC with type MascaWorkshopPOAP, they can enter the
+  // restricted chatroom.
+  const enterChat = async (channelId: string) => {
+    if (!api) {
+      return;
+    }
+    const vc = vcs.find((vc) => {
+      return vc.data?.type?.includes('MascaWorkshopPOAP');
+    });
+    if (!vc) {
+      alert('You do not have the required VC to enter this chatroom');
+      console.error('No VC found');
+      return;
+    }
+    const result = await createVP(vc.data);
+
+    if (!result) {
+      alert('You do not have the required VC to enter this chatroom');
+      return;
+    }
+    if (result) {
+      const { user, success, err } = await insertOrGetUser({
+        did,
+        username,
+      });
+      if (!success) {
+        alert(err);
+        return;
+      }
+      setUser(user);
+      setAuthenticated(true);
+      router.push(`/chat/${channelId}`);
+      return;
+    }
+  };
+
   return (
-    <div className="h-full w-full">
-      <Navbar connect={connect} connected={connected} did={did} />
-      {connected && vcsQueried && !hasValidVc && (
-        <div className="flex flex-col items-center justify-center p-16">
-          <div className="text-xl font-semibold">Get your Workshop VC</div>
-          <div className="mt-4 p-2">
-            <div className="flex justify-end gap-x-2">
-              <label className="font-semibold text-gray-300">Name</label>
-              <input
-                onChange={handleNameChange}
-                className="text-gray-800"
-                type="text"
-              />
-            </div>
-            <div className="mt-4 flex justify-end gap-x-2">
-              <label className="font-semibold text-gray-300">Password</label>
-              <input
-                onChange={handlePasswordChange}
-                className="text-gray-800"
-                type="password"
-              />
-            </div>
-          </div>
-          <button
-            onClick={getVC}
-            className="mt-2 rounded-lg bg-orange-500 p-2 font-semibold text-slate-100 transition-all hover:bg-orange-500/80"
-          >
-            Get VC
-          </button>
-        </div>
-      )}
+    <div className="flex h-screen w-full flex-col">
+      <Navbar connect={connect} connected={connected} />
       {connected && !vcsQueried && (
         <div className="flex justify-center p-16">
           <button
@@ -236,16 +233,60 @@ export default function Home() {
           </button>
         </div>
       )}
-      {connected && vcsQueried && vcs.length > 0 && (
-        <div className="flex flex-col items-center justify-center p-16">
-          {vcs.map((vc) => (
-            <VCCard
-              vc={vc}
-              key={vc.metadata.id}
-              createVP={createVP}
-              deleteVC={deleteVC}
-            />
-          ))}
+      {connected && vcsQueried && (
+        <div className="flex flex-1">
+          <div className="w-2/3">
+            {!hasValidVc && (
+              <div className="flex flex-col items-center justify-center p-16">
+                <div className="text-xl font-semibold">
+                  Get your Workshop VC
+                </div>
+                <div className="mt-4 p-2">
+                  <div className="flex justify-end gap-x-2">
+                    <label className="font-semibold text-gray-300">Name</label>
+                    <input
+                      onChange={handleNameChange}
+                      className="text-gray-800"
+                      type="text"
+                    />
+                  </div>
+                  <div className="mt-4 flex justify-end gap-x-2">
+                    <label className="font-semibold text-gray-300">
+                      Password
+                    </label>
+                    <input
+                      onChange={handlePasswordChange}
+                      className="text-gray-800"
+                      type="password"
+                    />
+                  </div>
+                </div>
+                <button
+                  onClick={getVC}
+                  className="mt-2 rounded-lg bg-orange-500 p-2 font-semibold text-slate-100 transition-all hover:bg-orange-500/80"
+                >
+                  Get VC
+                </button>
+              </div>
+            )}
+            {vcs.length > 0 && (
+              <div className="flex flex-col items-center justify-center p-16">
+                {vcs.map((vc) =>
+                  vc.data.type?.includes('MascaWorkshopPOAP') ? (
+                    <VCCard
+                      vc={vc}
+                      key={vc.metadata.id}
+                      createVP={createVP}
+                      deleteVC={deleteVC}
+                    />
+                  ) : null
+                )}
+              </div>
+            )}
+          </div>
+          <div className="w-1/3">
+            <ChannelList enterChat={enterChat} />
+          </div>
         </div>
       )}
     </div>

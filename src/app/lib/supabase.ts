@@ -1,7 +1,8 @@
 import { useState, useEffect, type SetStateAction, type Dispatch } from 'react';
 import { createClient } from '@supabase/supabase-js';
-import type { IMessage } from '@/types/messages.types';
+import type { IMessage } from '@/types/message.types';
 import type { IUser } from '@/types/user.types';
+import { IChannel } from '@/types/channel.types';
 
 const options = {
   db: {
@@ -20,7 +21,12 @@ export const supabase = createClient(
   options
 );
 
-export const useSupabaseStore = () => {
+export const useSupabaseStore = (params: {
+  channelId: string;
+  privileged: boolean;
+}) => {
+  const { channelId, privileged } = params;
+  const [channel, setChannel] = useState<IChannel | null>(null);
   const [messages, setMessages] = useState<IMessage[]>([]);
   const [users, setUsers] = useState<IUser[]>([]);
   const [newMessage, handleNewMessage] = useState<IMessage | null>(null);
@@ -29,16 +35,35 @@ export const useSupabaseStore = () => {
   );
   // Load initial data and set up listeners
   useEffect(() => {
-    fetchMessages({ setState: setMessages });
-    fetchUsers({ setState: setUsers });
-    // Listen for new and deleted messages
+    const handleAsync = async () => {
+      const channel = (await fetchChannel({
+        channelId: channelId,
+      })) as IChannel[];
+      if (channel) setChannel(channel[0] as IChannel);
+      if (channel[0].protected && !privileged) {
+        return;
+      }
+      if (channel[0].protected && privileged) {
+        console.log('fetching');
+        fetchMessages({ channelId, setState: setMessages });
+      }
+      if (!channel[0].protected) {
+        console.log('fetching unprotected');
+        fetchMessages({ channelId, setState: setMessages });
+      }
+      fetchUsers({ setState: setUsers });
+    };
+    handleAsync();
+    // Listen for new messages
     const messageListener = supabase
       .channel('public:messages')
       .on(
         'postgres_changes',
         { event: 'INSERT', schema: 'public', table: 'messages' },
         (payload) => {
-          handleNewMessage(payload.new as IMessage);
+          if (payload.new.channel === channelId) {
+            handleNewMessage(payload.new as IMessage);
+          }
         }
       )
       .subscribe();
@@ -58,15 +83,27 @@ export const useSupabaseStore = () => {
     };
   }, []);
 
-  // New message received from Postgres
   useEffect(() => {
+    const handleAsync = async () => {
+      if (newMessage?.channel !== channelId) return;
+      const user = users.find((user) => {
+        return user.id === newMessage.sender;
+      });
+
+      let msg: IMessage;
+      if (user) {
+        msg = { ...newMessage, user } as IMessage;
+      } else {
+        msg = {
+          ...newMessage,
+          user: { username: newMessage.senderDid },
+        } as IMessage;
+      }
+      console.log('Before setting msg');
+      setMessages(messages.concat(msg));
+      console.log('After setting msg');
+    };
     if (newMessage && Object.keys(newMessage).length > 0) {
-      const handleAsync = async () => {
-        const user = users.find((user) => {
-          return user.id === newMessage.sender;
-        });
-        setMessages(messages.concat({ ...newMessage, user } as IMessage));
-      };
       handleAsync();
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -86,13 +123,15 @@ export const useSupabaseStore = () => {
 };
 
 export const fetchMessages = async (params: {
+  channelId: string;
   setState: Dispatch<SetStateAction<IMessage[]>>;
 }) => {
-  const { setState } = params;
+  const { channelId, setState } = params;
   try {
     const { data: messages, error } = await supabase
       .from('messages')
       .select('*, user:users(username, id)')
+      .eq('channel', channelId)
       .order('created_at', { ascending: true });
     if (error) {
       console.log('error', error);
@@ -122,6 +161,42 @@ export const addUser = async (params: { username: string; did: string }) => {
   }
 };
 
+export const fetchChannels = async (params: {
+  setState?: Dispatch<SetStateAction<IChannel[]>>;
+}) => {
+  const { setState } = params;
+  try {
+    const { data: channels, error } = await supabase
+      .from('channels')
+      .select('*');
+    if (error) {
+      console.log('error', error);
+      return;
+    }
+    if (setState) setState(channels);
+    return channels as IChannel[];
+  } catch (error) {
+    console.log('error', error);
+  }
+};
+
+export const fetchChannel = async (params: { channelId: string }) => {
+  const { channelId: id } = params;
+  try {
+    const { data: channel, error } = await supabase
+      .from('channels')
+      .select('*')
+      .eq('id', id);
+    if (error) {
+      console.log('error', error);
+      return;
+    }
+    return channel as IChannel[];
+  } catch (error) {
+    console.log('error', error);
+  }
+};
+
 export const fetchUsers = async (params: {
   setState: Dispatch<SetStateAction<IUser[]>>;
 }) => {
@@ -142,12 +217,14 @@ export const fetchUsers = async (params: {
 export const addMessage = async (params: {
   message: string;
   sender: number;
+  channel: string;
+  did: string;
 }) => {
-  const { message, sender } = params;
   try {
+    const { message, sender, channel, did } = params;
     let { data, error } = await supabase
       .from('messages')
-      .insert([{ message, sender }])
+      .insert([{ message, sender, channel, senderDid: did }])
       .select();
     return data;
   } catch (error) {
@@ -155,12 +232,12 @@ export const addMessage = async (params: {
   }
 };
 
-export const doesExist = async (params: { col: string; did: string }) => {
-  const { col, did } = params;
+export const getUserBy = async (params: { col: string; value: string }) => {
+  const { col, value } = params;
   const { data, error } = await supabase
     .from('users')
     .select('*')
-    .eq(col, did)
+    .eq(col, value)
     .single();
 
   if (error) return console.error(error);
@@ -177,11 +254,11 @@ export const insertOrGetUser = async (params: {
   username: string;
 }) => {
   const { did, username } = params;
-  const userByDid = await doesExist({ col: 'did', did });
+  const userByDid = await getUserBy({ col: 'did', value: did });
   if (userByDid) {
     return { user: userByDid, success: true };
   }
-  const userByUsername = await doesExist({ col: 'username', did: username });
+  const userByUsername = await getUserBy({ col: 'username', value: username });
   if (userByUsername) {
     return {
       user: userByUsername,

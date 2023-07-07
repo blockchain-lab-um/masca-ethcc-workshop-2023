@@ -10,7 +10,7 @@ type VCCardProps = {
 
 export const VCCard = ({ vc, deleteVC, createVP }: VCCardProps) => {
   return (
-    <div className="mb-4 relative h-40 w-72 rounded-xl bg-white p-4 text-gray-800">
+    <div className="relative mb-4 h-40 w-72 rounded-xl bg-white p-4 text-gray-800">
       <div className="flex justify-between break-words font-semibold">
         {vc.data.type && vc.data.type[1]}
         <button
@@ -36,11 +36,7 @@ export const VCCard = ({ vc, deleteVC, createVP }: VCCardProps) => {
           onClick={() => createVP(vc.data)}
           className="rounded-lg bg-orange-400 p-1 font-semibold hover:bg-orange-400/80"
         >
-          {vc.data.type && vc.data.type[1] === 'MascaWorkshopPOAP' ? (
-            <p>Enter Chat</p>
-          ) : (
-            <p>Create VP</p>
-          )}
+          <p>Create VP</p>
         </button>
       </div>
     </div>

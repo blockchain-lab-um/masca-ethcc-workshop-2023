@@ -4,6 +4,8 @@ export interface IMessage {
   readonly id: number;
   message: string;
   sender: number;
-  user: IUser | null;
-  created_at: string;
+  user?: IUser;
+  senderDid?: string;
+  channel?: string;
+  created_at?: string;
 }

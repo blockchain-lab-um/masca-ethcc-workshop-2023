@@ -2,8 +2,11 @@ import { NextResponse } from 'next/server';
 import { getAgent } from '../veramoSetup';
 import { MinimalImportableKey } from '@veramo/core';
 
-const address = '0x5c74DbEf6e5cA7eCBA05de2a1A1eE65b7D662ffF';
-const pk = 'acb96d1a413eea8e2ff39d6675e39fd1f7d78629c057e1fba1f0cc9dafb7e1f4';
+const address =
+  process.env.ADDRESS || '0xe8c79F750986cD74f0f793F2e790734c7878986B';
+const pk =
+  process.env.PRIVATE_KEY ||
+  '5aaf3ef1c94aaa6ba52ece09d9017d1c38708dbaa9258f402195782480b35e85';
 const issuer = `did:ethr:mainnet:${address}`;
 
 export async function POST(request: Request) {
@@ -16,7 +19,6 @@ export async function POST(request: Request) {
     const decodedVerifiableCredential = JSON.parse(
       atob(vp.verifiableCredential[0].split('.')[1])
     );
-
     if (
       vp.holder === decodedVerifiableCredential.sub &&
       decodedVerifiableCredential.iss === issuer &&
