@@ -1,13 +1,6 @@
 import { NextResponse } from 'next/server';
 import { getAgent } from '../veramoSetup';
-import { MinimalImportableKey } from '@veramo/core';
-
-const address =
-  process.env.ADDRESS || '0xe8c79F750986cD74f0f793F2e790734c7878986B';
-const pk =
-  process.env.PRIVATE_KEY ||
-  '5aaf3ef1c94aaa6ba52ece09d9017d1c38708dbaa9258f402195782480b35e85';
-const issuer = `did:ethr:mainnet:${address}`;
+import { ISSUER, REQUIRED_TYPE } from '../constants';
 
 export async function POST(request: Request) {
   const { vp } = await request.json();
@@ -21,13 +14,13 @@ export async function POST(request: Request) {
     );
     if (
       vp.holder === decodedVerifiableCredential.sub &&
-      decodedVerifiableCredential.iss === issuer &&
-      decodedVerifiableCredential.vc.type[1] === 'MascaWorkshopPOAP'
+      decodedVerifiableCredential.iss === ISSUER &&
+      decodedVerifiableCredential.vc.type[1] === REQUIRED_TYPE
     ) {
       valid = true;
     }
   }
-
+  console.log('verifyPresentation result: ', res);
   return NextResponse.json(
     {
       valid: valid,

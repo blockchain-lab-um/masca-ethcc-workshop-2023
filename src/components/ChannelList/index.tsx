@@ -1,7 +1,7 @@
 import { fetchChannels } from '@/app/lib/supabase';
 import { IChannel } from '@/types/channel.types';
 import Link from 'next/link';
-import { MouseEventHandler, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 
 interface ChannelListProps {
   enterChat: (channelId: string) => Promise<void>;
@@ -10,9 +10,10 @@ export const ChannelList = (props: ChannelListProps) => {
   const { enterChat } = props;
   const [protectedChannels, setProtectedChannels] = useState<IChannel[]>([]);
   const [publicChannels, setPublicChannels] = useState<IChannel[]>([]);
+  const [requiredType, setRequiredType] = useState<string>('');
 
   useEffect(() => {
-    const getChannels = async () => {
+    const handleAsync = async () => {
       const channels = await fetchChannels({});
       const protectedChannels: IChannel[] = [];
       const publicChannels: IChannel[] = [];
@@ -24,10 +25,19 @@ export const ChannelList = (props: ChannelListProps) => {
           publicChannels.push(c);
         }
       });
+      const response = await fetch('/api/issue', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+
+      const { requiredType } = await response.json();
+      setRequiredType(requiredType);
       setProtectedChannels(protectedChannels as IChannel[]);
       setPublicChannels(publicChannels as IChannel[]);
     };
-    getChannels();
+    handleAsync();
   }, []);
 
   return (
@@ -58,7 +68,7 @@ export const ChannelList = (props: ChannelListProps) => {
             >
               <p>{c.title}</p>
               <p className="self-center text-xs text-slate-500">
-                (Needs MascaWorkshopPOAP)
+                (Needs {requiredType})
               </p>
             </div>
           ))}

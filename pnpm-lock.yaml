@@ -17,6 +17,12 @@ dependencies:
   '@ethersproject/providers':
     specifier: ^5.7.2
     version: 5.7.2
+  '@headlessui/react':
+    specifier: ^1.7.15
+    version: 1.7.15(react-dom@18.2.0)(react@18.2.0)
+  '@heroicons/react':
+    specifier: ^2.0.18
+    version: 2.0.18(react@18.2.0)
   '@metamask/detect-provider':
     specifier: ^2.0.0
     version: 2.0.0
@@ -39,6 +45,9 @@ dependencies:
     specifier: ^5.1.2
     version: 5.1.2
   '@veramo/did-provider-ethr':
+    specifier: ^5.1.2
+    version: 5.1.2
+  '@veramo/did-provider-pkh':
     specifier: ^5.1.2
     version: 5.1.2
   '@veramo/did-resolver':
@@ -3014,6 +3023,26 @@ packages:
     dev: false
     optional: true
 
+  /@headlessui/react@1.7.15(react-dom@18.2.0)(react@18.2.0):
+    resolution: {integrity: sha512-OTO0XtoRQ6JPB1cKNFYBZv2Q0JMqMGNhYP1CjPvcJvjz8YGokz8oAj89HIYZGN0gZzn/4kk9iUpmMF4Q21Gsqw==}
+    engines: {node: '>=10'}
+    peerDependencies:
+      react: ^16 || ^17 || ^18
+      react-dom: ^16 || ^17 || ^18
+    dependencies:
+      client-only: 0.0.1
+      react: 18.2.0
+      react-dom: 18.2.0(react@18.2.0)
+    dev: false
+
+  /@heroicons/react@2.0.18(react@18.2.0):
+    resolution: {integrity: sha512-7TyMjRrZZMBPa+/5Y8lN0iyvUU/01PeMGX2+RE7cQWpEUIcb4QotzUObFkJDejj/HUH4qjP/eQ0gzzKs2f+6Yw==}
+    peerDependencies:
+      react: '>= 16'
+    dependencies:
+      react: 18.2.0
+    dev: false
+
   /@humanwhocodes/config-array@0.11.10:
     resolution: {integrity: sha512-KVVjQmNUepDVGXNuoRRdmmEjruj0KfiGSbS8LVc12LMsWDQzRXJ0qdhN8L8uUigKpfEHRhlaQFY0ib1tnUbNeQ==}
     engines: {node: '>=10.10.0'}
@@ -4547,6 +4576,22 @@ packages:
       - bufferutil
       - supports-color
       - utf-8-validate
+    dev: false
+
+  /@veramo/did-provider-pkh@5.1.2:
+    resolution: {integrity: sha512-JzT2eZKZXKo6vqjK31h0A0ye96BJLCXRKzU7L1IBzE1lcoGJRqrjENUuY1HTbdXeOXRFLGEGKW35WPzB1Rxz0A==}
+    dependencies:
+      '@ethersproject/abstract-provider': 5.7.0
+      '@ethersproject/bignumber': 5.7.0
+      '@ethersproject/signing-key': 5.7.0
+      '@ethersproject/transactions': 5.7.0
+      '@veramo/core-types': 5.1.2
+      '@veramo/did-manager': 5.1.2
+      caip: 1.1.0
+      debug: 4.3.4
+      did-resolver: 4.1.0
+    transitivePeerDependencies:
+      - supports-color
     dev: false
 
   /@veramo/did-resolver@5.2.0(encoding@0.1.13):

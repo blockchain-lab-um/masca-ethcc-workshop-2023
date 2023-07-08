@@ -1,6 +1,5 @@
 import {
   createAgent,
-  CredentialStatus,
   IIdentifier,
   type ICredentialVerifier,
   type IDataStore,
@@ -10,16 +9,16 @@ import {
   type TAgent,
   IKey,
 } from '@veramo/core';
+import {
+  PkhDIDProvider,
+  getDidPkhResolver as pkhDidResolver,
+} from '@veramo/did-provider-pkh';
 import { CredentialIssuerEIP712 } from '@veramo/credential-eip712';
 import {
   CredentialPlugin,
   type ICredentialIssuer,
 } from '@veramo/credential-w3c';
-import {
-  AbstractDIDStore,
-  AbstractIdentifierProvider,
-  DIDManager,
-} from '@veramo/did-manager';
+import { AbstractDIDStore, DIDManager } from '@veramo/did-manager';
 import { EthrDIDProvider } from '@veramo/did-provider-ethr';
 import { DIDResolverPlugin } from '@veramo/did-resolver';
 import {
@@ -30,7 +29,7 @@ import {
 import { KeyManagementSystem } from '@veramo/kms-local';
 import { Resolver } from 'did-resolver';
 import { getResolver as ethrDidResolver } from 'ethr-did-resolver';
-import { JsonRpcProvider, Web3Provider } from '@ethersproject/providers';
+import { JsonRpcProvider } from '@ethersproject/providers';
 
 export type Agent = TAgent<
   IDIDManager &
@@ -90,6 +89,9 @@ export const getAgent = async (): Promise<Agent> => {
             defaultKms: 'local',
             networks,
           }),
+          'did:pkh': new PkhDIDProvider({
+            defaultKms: 'local',
+          }),
         },
       }),
       new KeyManager({
@@ -101,6 +103,7 @@ export const getAgent = async (): Promise<Agent> => {
       new DIDResolverPlugin({
         resolver: new Resolver({
           ...ethrDidResolver({ networks }),
+          ...pkhDidResolver(),
         }),
       }),
     ],

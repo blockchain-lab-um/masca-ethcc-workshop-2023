@@ -1,30 +1,29 @@
 'use client';
-import { Navbar } from '@/components/Navbar';
 import { VCCard } from '@/components/VCCard';
-import { enableMasca } from '@blockchain-lab-um/masca-connector';
 import type { QueryVCsRequestResult } from '@blockchain-lab-um/masca-types';
 import { isError } from '@blockchain-lab-um/utils';
 import type { W3CVerifiableCredential } from '@veramo/core';
 import { useEffect, useState } from 'react';
 import { useUserStore } from './lib/store';
 import { useRouter } from 'next/navigation';
-import { getUserBy, insertOrGetUser } from './lib/supabase';
+import { insertOrGetUser } from './lib/supabase';
 import { ChannelList } from '@/components/ChannelList';
 
 export default function Home() {
   const {
     setUsername,
     username,
+    connected,
     setUser,
     setAuthenticated,
-    setApi,
     api,
-    setDid,
     did,
   } = useUserStore((state) => ({
     username: state.username,
     setUsername: state.setUsername,
     setUser: state.setUser,
+
+    connected: state.connected,
 
     did: state.did,
     setDid: state.setDid,
@@ -35,17 +34,33 @@ export default function Home() {
     setAuthenticated: state.setAuthenticated,
   }));
   const router = useRouter();
-  const [connected, setConnected] = useState(false);
   const [hasValidVc, setHasValidVc] = useState(false);
   const [vcs, setVcs] = useState<QueryVCsRequestResult[]>([]);
   const [vcsQueried, setVcsQueried] = useState(false);
   const [password, setPassword] = useState<string>('');
+  const [issuer, setIssuer] = useState<string>('');
+  const [requiredType, setRequiredType] = useState<string>('');
+
+  useEffect(() => {
+    const handleAsync = async () => {
+      const response = await fetch('/api/issue', {
+        method: 'GET',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+      });
+      const { issuer, requiredType } = await response.json();
+      setIssuer(issuer);
+      setRequiredType(requiredType);
+    };
+    handleAsync();
+  });
 
   useEffect(() => {
     const handleVcsChange = async (vcs: QueryVCsRequestResult[]) => {
       setHasValidVc(false);
       vcs.forEach((vc) => {
-        if (vc.data?.type?.includes('MascaWorkshopPOAP')) {
+        if (vc.data?.type?.includes(requiredType)) {
           setHasValidVc(true);
           return;
         }
@@ -54,35 +69,18 @@ export default function Home() {
     handleVcsChange(vcs);
   }, [vcs]);
 
-  const connect = async () => {
-    const addresses = await window.ethereum.request({
-      method: 'eth_requestAccounts',
-    });
-    const masca = await enableMasca((addresses as string[])[0]);
-
-    if (isError(masca)) {
-      console.error(masca.error);
-      return;
-    }
-
-    const api = masca.data.getMascaApi();
-    const did = await api.getDID();
-    setApi(api);
-    setConnected(true);
-    if (isError(did)) {
-      console.error(did.error);
-      return;
-    }
-    const user = await getUserBy({ col: 'did', value: did.data });
-    if (user) setUser(user);
-    setDid(did.data);
-  };
-
   const queryVCs = async () => {
     if (!api) {
       return;
     }
-    const vcs = await api.queryVCs();
+    const filter = `$[?((@.data.type == "${requiredType}" || @.data.type.includes("${requiredType}")) && ((@.data.issuer == "${issuer}") || (@.data.issuer.id == "${issuer}")))]`;
+    // An example of using JSONPath to filter VCs
+    const vcs = await api.queryVCs({
+      filter: {
+        type: 'JSONPath',
+        filter,
+      },
+    });
     if (isError(vcs)) {
       console.error(vcs.error);
       return;
@@ -184,14 +182,14 @@ export default function Home() {
   };
 
   // An example on how to ask for VP from a VC, and give special permissions based on that.
-  // In this case, if the user has a VC with type MascaWorkshopPOAP, they can enter the
+  // In this case, if the user has a VC with type REQUIRED_TYPE, they can enter the
   // restricted chatroom.
   const enterChat = async (channelId: string) => {
     if (!api) {
       return;
     }
     const vc = vcs.find((vc) => {
-      return vc.data?.type?.includes('MascaWorkshopPOAP');
+      return vc.data?.type?.includes(requiredType);
     });
     if (!vc) {
       alert('You do not have the required VC to enter this chatroom');
@@ -222,7 +220,6 @@ export default function Home() {
 
   return (
     <div className="flex h-screen w-full flex-col">
-      <Navbar connect={connect} connected={connected} />
       {connected && !vcsQueried && (
         <div className="flex justify-center p-16">
           <button
@@ -234,7 +231,7 @@ export default function Home() {
         </div>
       )}
       {connected && vcsQueried && (
-        <div className="flex flex-1">
+        <div className="flex flex-1 ">
           <div className="w-2/3">
             {!hasValidVc && (
               <div className="flex flex-col items-center justify-center p-16">
@@ -272,7 +269,7 @@ export default function Home() {
             {vcs.length > 0 && (
               <div className="flex flex-col items-center justify-center p-16">
                 {vcs.map((vc) =>
-                  vc.data.type?.includes('MascaWorkshopPOAP') ? (
+                  vc.data.type?.includes(requiredType) ? (
                     <VCCard
                       vc={vc}
                       key={vc.metadata.id}

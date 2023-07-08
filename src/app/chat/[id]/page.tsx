@@ -3,15 +3,13 @@
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '../../lib/store';
 import { MessageInput } from '@/components/MessageInput';
-import { Navbar } from '@/components/Navbar';
 import { MessagesPanel } from '@/components/MessagesPanel';
 import { addMessage, fetchChannel, useSupabaseStore } from '../../lib/supabase';
 import { UserList } from '@/components/UserList';
 import { useEffect, useState } from 'react';
-import { IChannel } from '@/types/channel.types';
-import { IMessage } from '@/types/message.types';
-import { IUser } from '@/types/user.types';
-import Message from '@/components/Message';
+import type { IChannel } from '@/types/channel.types';
+import type { IMessage } from '@/types/message.types';
+import type { IUser } from '@/types/user.types';
 
 interface ChatProps {
   params: { id: string };
@@ -63,7 +61,6 @@ export default function Chat({ params, connected }: ChatProps) {
   }, []);
 
   const postMessage = async (text: string) => {
-    console.log('sender', userId);
     addMessage({
       message: text,
       sender: userId as number,
@@ -73,10 +70,7 @@ export default function Chat({ params, connected }: ChatProps) {
   };
 
   return (
-    <div className="flex h-screen w-full flex-col">
-      <div className="flex-none">
-        <Navbar connect={() => {}} username={username} connected={true} />
-      </div>
+    <div className="flex h-full w-full flex-col">
       <div className="flex flex-1 overflow-auto border-b-2 border-white">
         <div className={`${usersPanel ? 'w-2/3' : 'w-full'}`}>
           <MessagesPanel messages={messages} />

@@ -42,11 +42,9 @@ export const useSupabaseStore = (params: {
         return;
       }
       if (channel[0].protected && privileged) {
-        console.log('fetching');
         fetchMessages({ channelId, setState: setMessages });
       }
       if (!channel[0].protected) {
-        console.log('fetching unprotected');
         fetchMessages({ channelId, setState: setMessages });
       }
       fetchUsers({ setState: setUsers });
@@ -108,7 +106,6 @@ export const useSupabaseStore = (params: {
   // New or updated user received from Postgres
   useEffect(() => {
     if (newUser) setUsers(users.concat(newUser));
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newUser]);
 
@@ -235,8 +232,10 @@ export const getUserBy = async (params: { col: string; value: string }) => {
     .select('*')
     .eq(col, value)
     .single();
-
-  if (error) return console.error(error);
+  if (error) {
+    console.log('error', error);
+    return;
+  }
 
   if (data) {
     return data as IUser;

@@ -1,3 +1,4 @@
+import { Navbar } from '@/components/Navbar';
 import '../styles/globals.css';
 
 import { Metadata } from 'next';
@@ -58,7 +59,14 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={inter.className}>
-        <main>{children}</main>
+        <main className="flex h-screen w-full flex-col">
+          <div className="flex-none">
+            <Navbar />
+          </div>
+          <div className="flex h-full flex-1 flex-col overflow-auto">
+            {children}
+          </div>
+        </main>
       </body>
     </html>
   );
