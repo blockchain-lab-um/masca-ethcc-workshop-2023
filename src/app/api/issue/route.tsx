@@ -1,19 +1,27 @@
 import { NextResponse } from 'next/server';
 import { getAgent } from '../veramoSetup';
 import { MinimalImportableKey } from '@veramo/core';
+import { ADDRESS, ISSUER, PRIVATE_KEY, REQUIRED_TYPE } from '../constants';
 
-const address = '0x5c74DbEf6e5cA7eCBA05de2a1A1eE65b7D662ffF';
-const pk = 'acb96d1a413eea8e2ff39d6675e39fd1f7d78629c057e1fba1f0cc9dafb7e1f4';
+export async function GET(request: Request) {
+  return NextResponse.json(
+    {
+      issuer: ISSUER,
+      requiredType: REQUIRED_TYPE,
+    },
+    {
+      status: 200,
+    }
+  );
+}
 
 export async function POST(request: Request) {
   const { name, password, did } = await request.json();
-
   const agent = await getAgent();
   const controllerKeyId = 'key-1';
   const method = 'did:ethr';
-  console.log('importing issuer');
   const issuerDid = await agent.didManagerImport({
-    did: `did:ethr:mainnet:${address}`,
+    did: `did:ethr:mainnet:${ADDRESS}`,
     provider: method,
     controllerKeyId,
     keys: [
@@ -21,16 +29,15 @@ export async function POST(request: Request) {
         kid: controllerKeyId,
         type: 'Secp256k1',
         kms: 'local',
-        privateKeyHex: pk,
+        privateKeyHex: PRIVATE_KEY,
       } as MinimalImportableKey,
     ],
   });
-  console.log('Creating VC with issuer DID', issuerDid.did);
   const vc = await agent.createVerifiableCredential({
     credential: {
       issuer: { id: issuerDid.did },
       issuanceDate: new Date().toISOString(),
-      type: ['VerifiableCredential', 'MascaWorkshopPOAP'],
+      type: ['VerifiableCredential', REQUIRED_TYPE],
       credentialSubject: {
         name: name,
         id: did,
@@ -38,8 +45,6 @@ export async function POST(request: Request) {
     },
     proofFormat: 'jwt',
   });
-
-  console.log(vc);
 
   return NextResponse.json(
     {

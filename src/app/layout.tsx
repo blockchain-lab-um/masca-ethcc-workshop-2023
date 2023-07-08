@@ -1,3 +1,4 @@
+import { Navbar } from '@/components/Navbar';
 import '../styles/globals.css';
 
 import { Metadata } from 'next';
@@ -8,13 +9,13 @@ const inter = Inter({ subsets: ['latin'] });
 export const metadata: Metadata = {
   metadataBase: new URL('https://ethcc.masca.io'),
   title: {
-    default: 'Masca',
-    template: '%s | EthCC[6] Masca',
+    default: 'Masca EthCC[6]',
+    template: '%s | Masca EthCC[6] ',
   },
   description: '',
   keywords: ['ethcc', 'masca', 'decentralized identity'],
   openGraph: {
-    title: 'Masca EthCC Workshop',
+    title: 'Masca EthCC[6] Workshop',
     description: '',
     locale: 'en_US',
     url: 'https://ethcc.masca.io',
@@ -58,7 +59,14 @@ export default function RootLayout({
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
       <body className={inter.className}>
-        <main>{children}</main>
+        <main className="flex h-screen w-full flex-col">
+          <div className="flex-none">
+            <Navbar />
+          </div>
+          <div className="flex h-full flex-1 flex-col overflow-auto">
+            {children}
+          </div>
+        </main>
       </body>
     </html>
   );
