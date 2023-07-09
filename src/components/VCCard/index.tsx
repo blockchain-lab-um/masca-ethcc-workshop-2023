@@ -8,7 +8,7 @@ type VCCardProps = {
   createVP: (vc: W3CVerifiableCredential) => any;
 };
 
-export const VCCard = ({ vc, deleteVC, createVP }: VCCardProps) => {
+const VCCard = ({ vc, deleteVC, createVP }: VCCardProps) => {
   return (
     <div className="relative mb-4 h-40 w-72 rounded-xl bg-white p-4 text-gray-800">
       <div className="flex justify-between break-words font-semibold">
@@ -42,3 +42,4 @@ export const VCCard = ({ vc, deleteVC, createVP }: VCCardProps) => {
     </div>
   );
 };
+export default VCCard;

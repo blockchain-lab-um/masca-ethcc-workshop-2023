@@ -7,10 +7,19 @@ module.exports = {
   ],
   theme: {
     extend: {
+      colors: {
+        masca: {
+          100: '#323F4A',
+          200: '#242832',
+        },
+      },
       backgroundImage: {
         'gradient-radial': 'radial-gradient(var(--tw-gradient-stops))',
         'gradient-conic':
           'conic-gradient(from 180deg at 50% 50%, var(--tw-gradient-stops))',
+      },
+      fontFamily: {
+        ubuntu: ['var(--font-ubuntu)'],
       },
     },
   },

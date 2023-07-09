@@ -1,5 +1,5 @@
 'use client';
-import { VCCard } from '@/components/VCCard';
+import VCCard from '@/components/VCCard';
 import type { QueryVCsRequestResult } from '@blockchain-lab-um/masca-types';
 import { isError } from '@blockchain-lab-um/utils';
 import type { W3CVerifiableCredential } from '@veramo/core';
@@ -7,7 +7,8 @@ import { useEffect, useState } from 'react';
 import { useUserStore } from './lib/store';
 import { useRouter } from 'next/navigation';
 import { insertOrGetUser } from './lib/supabase';
-import { ChannelList } from '@/components/ChannelList';
+import ChannelList from '@/components/ChannelList';
+import Footer from '@/components/Footer';
 
 export default function Home() {
   const {
@@ -220,72 +221,77 @@ export default function Home() {
 
   return (
     <div className="flex h-screen w-full flex-col">
-      {connected && !vcsQueried && (
-        <div className="flex justify-center p-16">
-          <button
-            className="rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60"
-            onClick={queryVCs}
-          >
-            Query VCs
-          </button>
-        </div>
-      )}
-      {connected && vcsQueried && (
-        <div className="flex flex-1 ">
-          <div className="w-2/3">
-            {!hasValidVc && (
-              <div className="flex flex-col items-center justify-center p-16">
-                <div className="text-xl font-semibold">
-                  Get your Workshop VC
-                </div>
-                <div className="mt-4 p-2">
-                  <div className="flex justify-end gap-x-2">
-                    <label className="font-semibold text-gray-300">Name</label>
-                    <input
-                      onChange={handleNameChange}
-                      className="text-gray-800"
-                      type="text"
-                    />
-                  </div>
-                  <div className="mt-4 flex justify-end gap-x-2">
-                    <label className="font-semibold text-gray-300">
-                      Password
-                    </label>
-                    <input
-                      onChange={handlePasswordChange}
-                      className="text-gray-800"
-                      type="password"
-                    />
-                  </div>
-                </div>
-                <button
-                  onClick={getVC}
-                  className="mt-2 rounded-lg bg-orange-500 p-2 font-semibold text-slate-100 transition-all hover:bg-orange-500/80"
-                >
-                  Get VC
-                </button>
-              </div>
-            )}
-            {vcs.length > 0 && (
-              <div className="flex flex-col items-center justify-center p-16">
-                {vcs.map((vc) =>
-                  vc.data.type?.includes(requiredType) ? (
-                    <VCCard
-                      vc={vc}
-                      key={vc.metadata.id}
-                      createVP={createVP}
-                      deleteVC={deleteVC}
-                    />
-                  ) : null
-                )}
-              </div>
-            )}
+      <div className="flex h-full w-full flex-1 flex-col p-6">
+        {connected && !vcsQueried && (
+          <div className="flex h-full items-center justify-center p-16">
+            <button
+              className="h-12 rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60"
+              onClick={queryVCs}
+            >
+              Query VCs
+            </button>
           </div>
-          <div className="w-1/3">
-            <ChannelList enterChat={enterChat} />
+        )}
+        {connected && vcsQueried && (
+          <div className="flex flex-1 ">
+            <div className="w-2/3">
+              {!hasValidVc && (
+                <div className="flex flex-col items-center justify-center p-16">
+                  <div className="text-xl font-semibold">
+                    Get your Workshop VC
+                  </div>
+                  <div className="mt-4 p-2">
+                    <div className="flex justify-end gap-x-2">
+                      <label className="font-semibold text-gray-300">
+                        Name
+                      </label>
+                      <input
+                        onChange={handleNameChange}
+                        className="text-gray-800"
+                        type="text"
+                      />
+                    </div>
+                    <div className="mt-4 flex justify-end gap-x-2">
+                      <label className="font-semibold text-gray-300">
+                        Password
+                      </label>
+                      <input
+                        onChange={handlePasswordChange}
+                        className="text-gray-800"
+                        type="password"
+                      />
+                    </div>
+                  </div>
+                  <button
+                    onClick={getVC}
+                    className="mt-2 rounded-lg bg-orange-500 p-2 font-semibold text-slate-100 transition-all hover:bg-orange-500/80"
+                  >
+                    Get VC
+                  </button>
+                </div>
+              )}
+              {vcs.length > 0 && (
+                <div className="flex flex-col items-center justify-center p-16">
+                  {vcs.map((vc) =>
+                    vc.data.type?.includes(requiredType) ? (
+                      <VCCard
+                        vc={vc}
+                        key={vc.metadata.id}
+                        createVP={createVP}
+                        deleteVC={deleteVC}
+                      />
+                    ) : null
+                  )}
+                </div>
+              )}
+            </div>
+            <div className="w-1/3">
+              <ChannelList enterChat={enterChat} />
+            </div>
           </div>
-        </div>
-      )}
+        )}
+      </div>
+      <Footer />
     </div>
   );
 }

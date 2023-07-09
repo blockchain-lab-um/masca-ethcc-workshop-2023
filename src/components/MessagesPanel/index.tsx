@@ -5,9 +5,10 @@ import { useEffect, useRef } from 'react';
 
 interface MessagesPanelProps {
   messages: IMessage[];
+  msgOnly?: boolean;
 }
 
-export const MessagesPanel = ({ messages }: MessagesPanelProps) => {
+const MessagesPanel = ({ messages, msgOnly }: MessagesPanelProps) => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   useEffect(() => {
     if (!messagesEndRef.current) return;
@@ -18,7 +19,11 @@ export const MessagesPanel = ({ messages }: MessagesPanelProps) => {
   }, [messages]);
 
   return (
-    <div className="no-scrollbar h-full flex-1 overflow-auto px-4 py-2">
+    <div
+      className={`no-scrollbar ${
+        msgOnly ? 'mr-6' : ''
+      }mr-6 h-full flex-1 overflow-auto rounded-xl bg-slate-700 p-4 shadow-sm`}
+    >
       {messages.map((message) => (
         <Message key={message.id} message={message} />
       ))}
@@ -26,3 +31,5 @@ export const MessagesPanel = ({ messages }: MessagesPanelProps) => {
     </div>
   );
 };
+
+export default MessagesPanel;

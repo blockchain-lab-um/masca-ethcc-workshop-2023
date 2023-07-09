@@ -2,9 +2,17 @@ import { Navbar } from '@/components/Navbar';
 import '../styles/globals.css';
 
 import { Metadata } from 'next';
-import { Inter } from 'next/font/google';
+import { Cabin } from 'next/font/google';
+import { Ubuntu } from 'next/font/google';
+import clsx from 'clsx';
 
-const inter = Inter({ subsets: ['latin'] });
+const cabin = Cabin({ subsets: ['latin'], display: 'swap' });
+const ubuntu = Ubuntu({
+  variable: '--font-ubuntu',
+  display: 'swap',
+  weight: ['400', '500', '700'],
+  subsets: ['latin-ext'],
+});
 
 export const metadata: Metadata = {
   metadataBase: new URL('https://ethcc.masca.io'),
@@ -58,7 +66,7 @@ export default function RootLayout({
       <head>
         <meta name="viewport" content="width=device-width, initial-scale=1" />
       </head>
-      <body className={inter.className}>
+      <body className={clsx(`${cabin.className} ${ubuntu.variable}`)}>
         <main className="flex h-screen w-full flex-col">
           <div className="flex-none">
             <Navbar />

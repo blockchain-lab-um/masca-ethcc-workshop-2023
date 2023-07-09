@@ -4,7 +4,7 @@ interface IMessageInputProps {
   disabled: boolean;
   onSubmit: (text: string) => Promise<void>;
 }
-export const MessageInput = ({ disabled, onSubmit }: IMessageInputProps) => {
+const MessageInput = ({ disabled, onSubmit }: IMessageInputProps) => {
   const [messageText, setMessageText] = useState('');
   const submitOnEnter = (event: any) => {
     if (event.keyCode === 13 && messageText !== '') {
@@ -15,7 +15,7 @@ export const MessageInput = ({ disabled, onSubmit }: IMessageInputProps) => {
   return (
     <input
       disabled={disabled}
-      className="w-full appearance-none rounded border px-3 py-2 leading-tight text-gray-700 shadow focus:bg-slate-300 focus:outline-none"
+      className="h-full w-full appearance-none rounded border px-3 leading-tight text-gray-700 shadow focus:bg-slate-300 focus:outline-none"
       type="text"
       placeholder="Send a message"
       value={messageText}
@@ -24,3 +24,5 @@ export const MessageInput = ({ disabled, onSubmit }: IMessageInputProps) => {
     />
   );
 };
+
+export default MessageInput;
