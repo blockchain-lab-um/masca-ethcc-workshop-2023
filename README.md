@@ -1,4 +1,10 @@
-This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
+## Welcome!
+
+This dApp has been created to demonstrate the integration of Masca. This is a part of our workshop at EthCC[6].
+
+Simply by using our Masca Connector SDK ([GitHub](https://github.com/blockchain-lab-um/masca/tree/develop/packages/connector), [NPM](https://www.npmjs.com/package/@blockchain-lab-um/masca-connector)), you can take advantage of Masca's ability to manage users' decentralized identities.
+
+The live website can be accessed [here](https://ethcc.masca.io), where you can get your very special **Masca EthCC[6] Workshop Verifiable Credential**.
 
 ## Getting Started
 
@@ -10,9 +16,7 @@ pnpm dev
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
-
-This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Inter, a custom Google Font.
+This project uses [`next/font`](https://nextjs.org/docs/basic-features/font-optimization) to automatically optimize and load Ubuntu and Cabin, a custom Google Font.
 
 ## Learn More
 
