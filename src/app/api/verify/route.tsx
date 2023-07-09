@@ -20,7 +20,6 @@ export async function POST(request: Request) {
       valid = true;
     }
   }
-  console.log('verifyPresentation result: ', res);
   return NextResponse.json(
     {
       valid: valid,

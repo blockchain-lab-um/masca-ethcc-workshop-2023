@@ -2,10 +2,10 @@
 
 import { useRouter } from 'next/navigation';
 import { useUserStore } from '../../lib/store';
-import { MessageInput } from '@/components/MessageInput';
-import { MessagesPanel } from '@/components/MessagesPanel';
+import MessageInput from '@/components/MessageInput';
+import MessagesPanel from '@/components/MessagesPanel';
 import { addMessage, fetchChannel, useSupabaseStore } from '../../lib/supabase';
-import { UserList } from '@/components/UserList';
+import UserList from '@/components/UserList';
 import { useEffect, useState } from 'react';
 import type { IChannel } from '@/types/channel.types';
 import type { IMessage } from '@/types/message.types';
@@ -71,9 +71,9 @@ export default function Chat({ params, connected }: ChatProps) {
 
   return (
     <div className="flex h-full w-full flex-col">
-      <div className="flex flex-1 overflow-auto border-b-2 border-white">
+      <div className="flex flex-1 overflow-auto rounded-sm p-6">
         <div className={`${usersPanel ? 'w-2/3' : 'w-full'}`}>
-          <MessagesPanel messages={messages} />
+          <MessagesPanel messages={messages} msgOnly={!usersPanel} />
         </div>
         {usersPanel && (
           <div className=" w-1/3">
@@ -81,7 +81,7 @@ export default function Chat({ params, connected }: ChatProps) {
           </div>
         )}
       </div>
-      <div className="w-full p-2">
+      <div className="h-16 w-full items-center justify-center self-center py-2 px-6">
         <MessageInput
           disabled={channel.protected && !authenticated}
           onSubmit={postMessage}

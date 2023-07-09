@@ -15,7 +15,7 @@ type DropdownMenuItemProps = {
     | 'method';
 };
 
-export const DropdownMenuItem = ({
+const DropdownMenuItem = ({
   children,
   handleBtn,
   selected,
@@ -49,3 +49,5 @@ export const DropdownMenuItem = ({
     )}
   </Menu.Item>
 );
+
+export default DropdownMenuItem;

@@ -5,7 +5,7 @@ import { Menu, Transition } from '@headlessui/react';
 import { ChevronDownIcon } from '@heroicons/react/20/solid';
 import clsx from 'clsx';
 
-import { DropdownMenuItem } from './DropdownMenuItem';
+import DropdownMenuItem from './DropdownMenuItem';
 
 interface DropdownMenuProps {
   items: string[];
@@ -23,15 +23,13 @@ interface DropdownMenuProps {
   shadow?: 'sm' | 'md' | 'lg' | 'xl' | '2xl' | 'none' | 'inner' | '';
   setSelected: (selected: string) => void;
 }
-export function DropdownMenu({
+const DropdownMenu = ({
   items,
   selected,
   setSelected,
-  variant = 'primary',
-  size = 'md',
   rounded = 'full',
   shadow = 'sm',
-}: DropdownMenuProps) {
+}: DropdownMenuProps) => {
   return (
     <Menu as="div" className="relative z-10">
       {({ open }) => (
@@ -40,7 +38,7 @@ export function DropdownMenu({
             <Menu.Button
               // eslint-disable-next-line tailwindcss/no-custom-classname, tailwindcss/no-contradicting-classname
               className={clsx(
-                `animated-transition flex items-center justify-center focus:outline-none btn animated-transition bg-slate-400 text-white font-bold hover:opacity-80 text-h5 font-ubuntu animated-transition inline-flex w-full justify-center rounded-3xl px-4 py-2 font-thin focus:outline-none rounded-${rounded} shadow-${shadow} ring-none outline-none`,
+                `animated-transition btn animated-transition text-h2 animated-transition rounded- inline-flex w-full items-center justify-center rounded-3xl bg-slate-400 px-4 py-2 font-ubuntu font-bold font-thin text-white hover:opacity-80 focus:outline-none${rounded} shadow-${shadow} ring-none outline-none`,
                 open ? 'opacity-80' : ''
               )}
             >
@@ -65,7 +63,7 @@ export function DropdownMenu({
             leaveFrom=" opacity-100 scale-100"
             leaveTo=" opacity-0 scale-95"
           >
-            <Menu.Items className="dark:bg-navy-blue-600 absolute right-0 mt-1 w-48 rounded-3xl bg-slate-400 shadow-lg focus:outline-none">
+            <Menu.Items className="dark:bg-navy-blue-600 absolute right-0 mt-1 w-32 rounded-3xl bg-slate-400 shadow-lg focus:outline-none">
               <div className="p-1">
                 {items.map((item, id) => (
                   <DropdownMenuItem
@@ -83,4 +81,5 @@ export function DropdownMenu({
       )}
     </Menu>
   );
-}
+};
+export default DropdownMenu;

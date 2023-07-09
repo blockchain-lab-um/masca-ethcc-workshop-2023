@@ -5,7 +5,7 @@ import { enableMasca } from '@blockchain-lab-um/masca-connector';
 import { isError } from '@blockchain-lab-um/utils';
 import Image from 'next/image';
 import Link from 'next/link';
-import { DropdownMenu } from '../Dropdown';
+import DropdownMenu from '../Dropdown';
 import { AvailableMethods } from '@blockchain-lab-um/masca-types';
 
 export const Navbar = (props: any) => {
@@ -84,15 +84,15 @@ export const Navbar = (props: any) => {
   };
 
   return (
-    <div className="flex w-full justify-between border-b-2 border-white p-6">
-      <div className="flex items-center gap-2 text-2xl font-bold">
-        <Image src="/masca_white.png" alt="masca-logo" width={40} height={36} />
-        <span className="text-orange-400">EthCC[6]</span> Workshop
+    <div className="flex w-full justify-between p-6">
+      <div className="flex items-center gap-2 font-ubuntu text-2xl">
+        <Image src="/masca_white.png" alt="masca-logo" width={40} height={40} />
+        <span className="font-bold text-orange-400">EthCC[6]</span> Workshop
       </div>
       <div className="flex items-center">
         {connected && (
           <div className="flex">
-            <div className="align-middle p-4">
+            <div className="p-4 align-middle">
               <DropdownMenu
                 size="method"
                 rounded="full"
@@ -116,7 +116,7 @@ export const Navbar = (props: any) => {
         )}
         {!connected && (
           <button
-            className="bg-white text-gray-800 hover:bg-white/60 rounded-lg p-2 font-semibold transition-all"
+            className="rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60"
             onClick={connect}
           >
             Connect
@@ -126,3 +126,5 @@ export const Navbar = (props: any) => {
     </div>
   );
 };
+
+export default Navbar;

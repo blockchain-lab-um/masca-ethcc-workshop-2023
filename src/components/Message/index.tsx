@@ -2,7 +2,7 @@ import type { IMessage } from '@/types/message.types';
 import { useEffect, useState } from 'react';
 import uniqolor from 'uniqolor';
 
-export const Message = ({ message }: { message: IMessage }) => {
+const Message = ({ message }: { message: IMessage }) => {
   const [color, setColor] = useState<any | null>(uniqolor(''));
   useEffect(() => {
     let seed = message.senderDid;
