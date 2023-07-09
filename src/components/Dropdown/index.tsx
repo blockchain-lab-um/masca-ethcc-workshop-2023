@@ -38,7 +38,7 @@ const DropdownMenu = ({
             <Menu.Button
               // eslint-disable-next-line tailwindcss/no-custom-classname, tailwindcss/no-contradicting-classname
               className={clsx(
-                `animated-transition btn animated-transition text-h2 animated-transition rounded- inline-flex w-full items-center justify-center rounded-3xl bg-slate-400 px-4 py-2 font-ubuntu font-bold font-thin text-white hover:opacity-80 focus:outline-none${rounded} shadow-${shadow} ring-none outline-none`,
+                `animated-transition btn animated-transition text-h2 animated-transition rounded- inline-flex w-full items-center justify-center rounded-3xl bg-slate-400 px-4 py-2 font-ubuntu font-bold font-thin text-white hover:opacity-80 focus:outline-none${rounded} shadow-${shadow} ring-none outline-none active:opacity-50`,
                 open ? 'opacity-80' : ''
               )}
             >

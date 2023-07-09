@@ -85,10 +85,17 @@ export const Navbar = (props: any) => {
 
   return (
     <div className="flex w-full justify-between p-6">
-      <div className="flex items-center gap-2 font-ubuntu text-2xl">
-        <Image src="/masca_white.png" alt="masca-logo" width={40} height={40} />
-        <span className="font-bold text-orange-400">EthCC[6]</span> Workshop
-      </div>
+      <Link href="/">
+        <div className="flex items-center gap-2 font-ubuntu text-2xl">
+          <Image
+            src="/masca_white.png"
+            alt="masca-logo"
+            width={40}
+            height={40}
+          />
+          <span className="font-bold text-orange-400">EthCC[6]</span> Workshop
+        </div>
+      </Link>
       <div className="flex items-center">
         {connected && (
           <div className="flex">
@@ -116,7 +123,7 @@ export const Navbar = (props: any) => {
         )}
         {!connected && (
           <button
-            className="rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60"
+            className="rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60 active:opacity-50"
             onClick={connect}
           >
             Connect

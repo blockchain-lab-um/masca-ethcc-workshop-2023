@@ -7,9 +7,11 @@ interface UserListProps {
 }
 const UserList = ({ users }: UserListProps) => {
   return (
-    <div className="no-scrollbar h-full flex-1 rounded-xl bg-slate-700 p-4 shadow-sm">
-      <p className="mb-2 px-4 text-lg text-slate-300">Participants</p>
-      <div className="rounded-md bg-slate-600 px-4 py-2">
+    <div className="no-scrollbar h-full flex-1 overflow-auto rounded-xl bg-slate-700 p-4 shadow-sm">
+      <div>
+        <p className="mb-2 px-4 text-lg text-slate-300">Participants</p>
+      </div>
+      <div className="overflow-auto rounded-md bg-slate-600 px-4 py-2">
         {users.map((user) => (
           <Link
             target="_blank"
