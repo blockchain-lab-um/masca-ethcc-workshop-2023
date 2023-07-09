@@ -15,7 +15,7 @@ const VCCard = ({ vc, deleteVC, createVP }: VCCardProps) => {
         {vc.data.type && vc.data.type[1]}
         <button
           onClick={() => deleteVC(vc.metadata.id)}
-          className="text-red-500"
+          className="text-red-500 active:opacity-50"
         >
           X
         </button>
@@ -31,10 +31,15 @@ const VCCard = ({ vc, deleteVC, createVP }: VCCardProps) => {
         {vc.data.issuanceDate}
       </div>
       <div className="bottom-0 mt-4 flex justify-end gap-x-1 text-xs">
-        <button onClick={() => console.log(vc.data)}>Log</button>
+        <button
+          className="active:opacity-50"
+          onClick={() => console.log(vc.data)}
+        >
+          Log
+        </button>
         <button
           onClick={() => createVP(vc.data)}
-          className="rounded-lg bg-orange-400 p-1 font-semibold hover:bg-orange-400/80"
+          className="rounded-lg bg-orange-400 p-1 font-semibold hover:bg-orange-400/80 active:opacity-50"
         >
           <p>Create VP</p>
         </button>

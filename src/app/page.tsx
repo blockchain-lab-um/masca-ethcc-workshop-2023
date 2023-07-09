@@ -225,7 +225,7 @@ export default function Home() {
         {connected && !vcsQueried && (
           <div className="flex h-full items-center justify-center p-16">
             <button
-              className="h-12 rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60"
+              className="h-12 rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60 active:opacity-50"
               onClick={queryVCs}
             >
               Query VCs
@@ -264,7 +264,7 @@ export default function Home() {
                   </div>
                   <button
                     onClick={getVC}
-                    className="mt-2 rounded-lg bg-orange-500 p-2 font-semibold text-slate-100 transition-all hover:bg-orange-500/80"
+                    className="mt-2 rounded-lg bg-orange-500 p-2 font-semibold text-slate-100 transition-all hover:bg-orange-500/80 active:opacity-50"
                   >
                     Get VC
                   </button>

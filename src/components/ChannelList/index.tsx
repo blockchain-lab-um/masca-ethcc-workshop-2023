@@ -43,7 +43,7 @@ const ChannelList = (props: ChannelListProps) => {
   return (
     <div className="h-full rounded-xl bg-slate-700 p-4 shadow-sm">
       <p className="mb-2 px-4 text-lg text-slate-300">Public chatrooms</p>
-      <div className="rounded-md bg-slate-600 px-4 py-2">
+      <div className="rounded-md bg-slate-600 px-4 py-2 hover:opacity-80 active:opacity-50">
         {publicChannels.map((c) => (
           <Link href={`/chat/${c.id}`} key={c.id}>
             <div className="flex cursor-pointer justify-between rounded-md bg-slate-600">
@@ -57,7 +57,7 @@ const ChannelList = (props: ChannelListProps) => {
         <p className="mb-2 px-4 text-lg text-slate-300">
           Restricted chatrooms 🔐
         </p>
-        <div className="rounded-md bg-slate-600 px-4 py-2">
+        <div className="rounded-md bg-slate-600 px-4 py-2 hover:opacity-80 active:opacity-50">
           {protectedChannels.map((c) => (
             <div
               onClick={() => enterChat(c.id as string)}
