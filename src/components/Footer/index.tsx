@@ -1,13 +1,22 @@
 import Link from 'next/link';
-import Image from 'next/image';
 import SocialsLink from '../SocialsLink';
 
 const Footer = () => {
   return (
-    <div className="flex h-16 justify-between bg-masca-100 p-4">
+    <div className="flex h-24 justify-between bg-masca-100 p-4">
       <div className="self-center align-middle">
+        <Link
+          className="hover:opacity-80 active:opacity-50"
+          href="https://docs.masca.io/"
+          target="_blank"
+        >
+          <p className="text-slate-400 hover:underline">Integrate now</p>
+        </Link>
         <p className="">Blockchain Lab:UM</p>
-        <Link href="mailto:blockchain-lab@um.si">
+        <Link
+          className="hover:underline active:opacity-50"
+          href="mailto:blockchain-lab@um.si"
+        >
           <p className="text-slate-400">blockchain-lab@um.si</p>
         </Link>
       </div>
