@@ -1,6 +1,6 @@
 /** @type {import('next-sitemap').IConfig} */
 const config = {
-  siteUrl: 'https://ethcc-workshop-2023.masca.io',
+  siteUrl: 'https://ethcc.masca.io',
   generateRobotsTxt: true,
   generateIndexSitemap: false,
   sitemapSize: 1000,

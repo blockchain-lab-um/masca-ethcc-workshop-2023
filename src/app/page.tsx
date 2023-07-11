@@ -4,9 +4,9 @@ import type { QueryVCsRequestResult } from '@blockchain-lab-um/masca-types';
 import { isError } from '@blockchain-lab-um/utils';
 import type { W3CVerifiableCredential } from '@veramo/core';
 import { useEffect, useState } from 'react';
-import { useUserStore } from './lib/store';
+import { useUserStore } from '../lib/store';
 import { useRouter } from 'next/navigation';
-import { insertOrGetUser } from './lib/supabase';
+import { insertOrGetUser } from '../lib/supabase';
 import ChannelList from '@/components/ChannelList';
 import Footer from '@/components/Footer';
 

@@ -1,6 +1,6 @@
 'use client';
-import { useUserStore } from '@/app/lib/store';
-import { getUserBy } from '@/app/lib/supabase';
+import { useUserStore } from '@/lib/store';
+import { getUserBy } from '@/lib/supabase';
 import { enableMasca } from '@blockchain-lab-um/masca-connector';
 import { isError } from '@blockchain-lab-um/utils';
 import Image from 'next/image';

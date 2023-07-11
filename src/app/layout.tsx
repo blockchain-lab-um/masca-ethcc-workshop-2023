@@ -20,11 +20,13 @@ export const metadata: Metadata = {
     default: 'Masca EthCC[6]',
     template: '%s | Masca EthCC[6] ',
   },
-  description: '',
+  description:
+    'A dApp built for demonstration purposes at EthCC[6] workshop Decentralized Identity meets MetaMask.',
   keywords: ['ethcc', 'masca', 'decentralized identity'],
   openGraph: {
     title: 'Masca EthCC[6] Workshop',
-    description: '',
+    description:
+      'Claim your unique EthCC[6] Verifiable Credential from Masca team and chat with other participants.',
     locale: 'en_US',
     url: 'https://ethcc.masca.io',
     siteName: 'Masca',

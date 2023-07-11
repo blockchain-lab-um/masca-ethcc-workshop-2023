@@ -1,10 +1,14 @@
 'use client';
 
 import { useRouter } from 'next/navigation';
-import { useUserStore } from '../../lib/store';
+import { useUserStore } from '../../../lib/store';
 import MessageInput from '@/components/MessageInput';
 import MessagesPanel from '@/components/MessagesPanel';
-import { addMessage, fetchChannel, useSupabaseStore } from '../../lib/supabase';
+import {
+  addMessage,
+  fetchChannel,
+  useSupabaseStore,
+} from '../../../lib/supabase';
 import UserList from '@/components/UserList';
 import { useEffect, useState } from 'react';
 import type { IChannel } from '@/types/channel.types';
@@ -13,9 +17,8 @@ import type { IUser } from '@/types/user.types';
 
 interface ChatProps {
   params: { id: string };
-  connected: boolean;
 }
-export default function Chat({ params, connected }: ChatProps) {
+export default function Chat({ params }: ChatProps) {
   const router = useRouter();
   const [usersPanel, setUsersPanel] = useState(false);
   const [channel, setChannel] = useState<IChannel>({

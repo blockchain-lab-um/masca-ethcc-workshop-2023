@@ -1,4 +1,4 @@
-import { fetchChannels } from '@/app/lib/supabase';
+import { fetchChannels } from '@/lib/supabase';
 import { IChannel } from '@/types/channel.types';
 import Link from 'next/link';
 import { useEffect, useState } from 'react';
