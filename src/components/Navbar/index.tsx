@@ -115,7 +115,13 @@ export const Navbar = (props: any) => {
               <Link target="_blank" href={`https://dev.uniresolver.io/#${did}`}>
                 <span className="text-lg text-gray-300">
                   {username && '(' + username + ') '}
-                  {did}
+                  {did &&
+                    [
+                      did.split(':').slice(0, 3).join(':'),
+                      `${did.split(':')[3].slice(0, 6)}...${did
+                        .split(':')[3]
+                        .slice(-4)}`,
+                    ].join(':')}
                 </span>
               </Link>
             </div>
