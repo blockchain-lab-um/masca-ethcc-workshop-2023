@@ -21,8 +21,8 @@ export async function GET(req: Request) {
     const values = Object.fromEntries(searchParams);
 
     const {
-      title = 'Masca',
-      description = 'A MetaMask Snap (plugin/wallet) for decentralized identity - Decentralized identifiers (DIDs) and Verifiable Credentials (VCs).',
+      title = 'Masca | EthCC[6] Workshop',
+      description = 'Claim your unique EthCC[6] Verifiable Credential from Masca team and chat with other participants.',
     } = values;
 
     return new ImageResponse(
