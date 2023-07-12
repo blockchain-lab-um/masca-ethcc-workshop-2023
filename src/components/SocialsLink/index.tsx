@@ -9,7 +9,7 @@ interface SocialsLinkProps {
 
 const SocialsLink = ({ alt, src, href }: SocialsLinkProps) => {
   return (
-    <Link className='p-2' href={href} target='_blank'>
+    <Link className="p-2" href={href} target="_blank">
       <Image
         className="hover:opacity-80 active:opacity-50"
         alt={alt}
