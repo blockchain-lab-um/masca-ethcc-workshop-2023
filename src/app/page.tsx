@@ -9,6 +9,7 @@ import { useRouter } from 'next/navigation';
 import { insertOrGetUser } from '../lib/supabase';
 import ChannelList from '@/components/ChannelList';
 import Footer from '@/components/Footer';
+import Link from 'next/link';
 
 export default function Home() {
   const {
@@ -222,6 +223,54 @@ export default function Home() {
   return (
     <div className="flex h-screen w-full flex-col">
       <div className="flex h-full w-full flex-1 flex-col p-6">
+        {!connected && (
+          <div className="flex h-full w-1/2 flex-col items-center justify-center self-center p-16">
+            <p className="text-center text-xl">Welcome to</p>
+            <p className="m-4 text-center text-3xl">
+              <span className="font-bold text-orange-400">
+                Decentralized Identity meets MetaMask
+              </span>
+            </p>
+            <p className="items-center text-center text-lg italic">
+              This dApp is a part of the EthCC[6] workshop where we explore the
+              exciting intersection of decentralized identity and MetaMask. We
+              will take a look at how to integrate Masca into a dApp, set it up,
+              and get our{' '}
+              <span className="font-bold not-italic">
+                demo{' '}
+                <Link
+                  className="text-sky-400"
+                  target="_blank"
+                  href="https://www.ethcc.io/"
+                >
+                  EthCC[6]
+                </Link>{' '}
+                x{' '}
+                <Link
+                  className="text-orange-400"
+                  target="_blank"
+                  href="https://masca.io"
+                >
+                  Masca
+                </Link>{' '}
+                Workshop Verifiable Credential
+              </span>
+              . We will show you how decentralized identity and MetaMask can
+              work together to create a more secure and decentralized web.
+            </p>
+            <p className="m-4">
+              Feel free to check out this dApp&apos;s{' '}
+              <Link
+                className="text-sky-400 underline hover:opacity-80 active:opacity-50"
+                href="https://github.com/blockchain-lab-um/masca-ethcc-workshop-2023"
+                target="_blank"
+              >
+                codebase
+              </Link>
+              .
+            </p>
+          </div>
+        )}
         {connected && !vcsQueried && (
           <div className="flex h-full items-center justify-center p-16">
             <button

@@ -5,6 +5,7 @@ import { Metadata } from 'next';
 import { Cabin } from 'next/font/google';
 import { Ubuntu } from 'next/font/google';
 import clsx from 'clsx';
+import AnalyticsWrapper from '@/components/AnalyticsWrapper';
 
 const cabin = Cabin({ subsets: ['latin'], display: 'swap' });
 const ubuntu = Ubuntu({
@@ -77,6 +78,7 @@ export default function RootLayout({
             {children}
           </div>
         </main>
+        <AnalyticsWrapper />
       </body>
     </html>
   );
