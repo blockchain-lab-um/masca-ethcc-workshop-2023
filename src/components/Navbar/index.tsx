@@ -43,7 +43,9 @@ export const Navbar = (props: any) => {
     const addresses = await window.ethereum.request({
       method: 'eth_requestAccounts',
     });
-    const masca = await enableMasca((addresses as string[])[0]);
+    const masca = await enableMasca((addresses as string[])[0], {
+      supportedMethods: ['did:ethr', 'did:pkh'],
+    });
 
     if (isError(masca)) {
       console.error(masca.error);
@@ -116,12 +118,11 @@ export const Navbar = (props: any) => {
                 <span className="text-lg text-gray-300">
                   {username && '(' + username + ') '}
                   {did &&
-                    [
-                      did.split(':').slice(0, 3).join(':'),
-                      `${did.split(':')[3].slice(0, 6)}...${did
-                        .split(':')[3]
-                        .slice(-4)}`,
-                    ].join(':')}
+                    `${did.substring(0, did.lastIndexOf(':'))}:${did
+                      .split(':')
+                      [did.split(':').length - 1].slice(0, 5)}...${did.slice(
+                      -4
+                    )}`}
                 </span>
               </Link>
             </div>

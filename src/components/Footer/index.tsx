@@ -36,7 +36,7 @@ const Footer = () => {
         <SocialsLink
           alt="Twitter Logo"
           src="images/twitter.svg"
-          href="https://twitter.com/@blockchainlabum"
+          href="https://twitter.com/@masca_io"
         />
         <SocialsLink
           alt="Medium Logo"

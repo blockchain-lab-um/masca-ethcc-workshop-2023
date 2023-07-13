@@ -28,7 +28,6 @@ const UserList = ({ users }: UserListProps) => {
                 {user.username}
               </p>
               <p className="self-center text-xs text-slate-500">
-                (
                 {user.did &&
                   [
                     user.did.split(':').slice(0, 3).join(':'),
@@ -36,7 +35,6 @@ const UserList = ({ users }: UserListProps) => {
                       .split(':')[3]
                       .slice(-4)}`,
                   ].join(':')}
-                )
               </p>
             </div>
           </Link>
