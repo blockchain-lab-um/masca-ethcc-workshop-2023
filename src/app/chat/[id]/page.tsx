@@ -84,7 +84,7 @@ export default function Chat({ params }: ChatProps) {
           </div>
         )}
       </div>
-      <div className="h-16 w-full items-center justify-center self-center py-2 px-6">
+      <div className="h-16 w-full items-center justify-center self-center px-6 py-2">
         <MessageInput
           disabled={channel.protected && !authenticated}
           onSubmit={postMessage}
