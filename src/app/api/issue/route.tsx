@@ -1,6 +1,7 @@
 import { NextResponse } from 'next/server';
 import { getAgent } from '../veramoSetup';
 import { MinimalImportableKey } from '@veramo/core';
+import { randomUUID } from 'crypto';
 import { ADDRESS, ISSUER, PRIVATE_KEY, REQUIRED_TYPE } from '../constants';
 import { keccak256 } from 'ethers';
 
@@ -43,12 +44,24 @@ export async function POST(request: Request) {
   });
   const vc = await agent.createVerifiableCredential({
     credential: {
+      id: randomUUID(),
       issuer: { id: issuerDid.did },
       issuanceDate: new Date().toISOString(),
+      '@context': [
+        'https://www.w3.org/2018/credentials/v1',
+        'https://beta.api.schemas.serto.id/v1/public/program-completion-certificate/1.0/ld-context.json',
+      ],
+      credentialSchema: {
+        id: 'https://beta.api.schemas.serto.id/v1/public/program-completion-certificate/1.0/json-schema.json',
+        type: 'JsonSchemaValidator2018',
+      },
       type: ['VerifiableCredential', REQUIRED_TYPE],
       credentialSubject: {
-        name: name,
         id: did,
+        learnerName: name,
+        accomplishmentType: 'Workshop Certificate',
+        achievement: 'EthCC[6]xMasca Workshop Attendee',
+        courseProvider: 'https://www.ethcc.masca.io/',
       },
     },
     proofFormat: 'jwt',
