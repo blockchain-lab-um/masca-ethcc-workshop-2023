@@ -7,6 +7,7 @@ import Image from 'next/image';
 import Link from 'next/link';
 import DropdownMenu from '../Dropdown';
 import { AvailableMethods } from '@blockchain-lab-um/masca-types';
+import { useState } from 'react';
 
 export const Navbar = (props: any) => {
   const {
@@ -38,8 +39,10 @@ export const Navbar = (props: any) => {
 
     setAuthenticated: state.setAuthenticated,
   }));
+  const [connecting, setConnecting] = useState(false);
 
   const connect = async () => {
+    setConnecting(true);
     const addresses = await window.ethereum.request({
       method: 'eth_requestAccounts',
     });
@@ -49,6 +52,7 @@ export const Navbar = (props: any) => {
 
     if (isError(masca)) {
       console.error(masca.error);
+      setConnecting(false);
       return;
     }
 
@@ -60,11 +64,13 @@ export const Navbar = (props: any) => {
     setConnected(true);
     if (isError(did)) {
       console.error(did.error);
+      setConnecting(false);
       return;
     }
     const user = await getUserBy({ col: 'did', value: did.data });
     if (user) setUser(user);
     setDid(did.data);
+    setConnecting(false);
   };
 
   const handleMethodSelect = async (method: string) => {
@@ -132,6 +138,7 @@ export const Navbar = (props: any) => {
           <button
             className="rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60 active:opacity-50"
             onClick={connect}
+            disabled={connecting}
           >
             Connect
           </button>

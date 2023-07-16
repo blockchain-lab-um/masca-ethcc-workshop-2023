@@ -42,6 +42,7 @@ export default function Home() {
   const [password, setPassword] = useState<string>('');
   const [issuer, setIssuer] = useState<string>('');
   const [requiredType, setRequiredType] = useState<string>('');
+  const [querying, setQuerying] = useState(false);
 
   useEffect(() => {
     const handleAsync = async () => {
@@ -72,6 +73,7 @@ export default function Home() {
   }, [vcs]);
 
   const queryVCs = async () => {
+    setQuerying(true);
     if (!api) {
       return;
     }
@@ -85,10 +87,12 @@ export default function Home() {
     });
     if (isError(vcs)) {
       console.error(vcs.error);
+      setQuerying(false);
       return;
     }
     setVcs(vcs.data);
     setVcsQueried(true);
+    setQuerying(false);
   };
 
   const handleNameChange = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -122,7 +126,11 @@ export default function Home() {
       },
       body: JSON.stringify({ name: user.username, password, did }),
     });
+
     const credential = await response.json();
+    if (credential.status === 401) {
+      alert(credential.error);
+    }
 
     const saveResult = await api.saveVC(credential.credential, {
       store: 'snap',
@@ -276,6 +284,7 @@ export default function Home() {
             <button
               className="h-12 rounded-lg bg-white p-2 font-semibold text-gray-800 transition-all hover:bg-white/60 active:opacity-50"
               onClick={queryVCs}
+              disabled={querying}
             >
               Query VCs
             </button>
