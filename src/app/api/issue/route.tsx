@@ -60,7 +60,7 @@ export async function POST(request: Request) {
         id: did,
         learnerName: name,
         accomplishmentType: 'Workshop Certificate',
-        achievement: 'EthCC[6]xMasca Workshop Attendee',
+        achievement: REQUIRED_TYPE,
         courseProvider: 'https://www.ethcc.masca.io/',
       },
     },
