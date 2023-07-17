@@ -29,12 +29,11 @@ const UserList = ({ users }: UserListProps) => {
               </p>
               <p className="self-center text-xs text-slate-500">
                 {user.did &&
-                  [
-                    user.did.split(':').slice(0, 3).join(':'),
-                    `${user.did.split(':')[3].slice(0, 6)}...${user.did
-                      .split(':')[3]
-                      .slice(-4)}`,
-                  ].join(':')}
+                  `${user.did.substring(0, did.lastIndexOf(':'))}:${user.did
+                    .split(':')
+                    [user.did.split(':').length - 1].slice(0, 5)}...${user.did.slice(
+                    -4
+                  )}`}
               </p>
             </div>
           </Link>
