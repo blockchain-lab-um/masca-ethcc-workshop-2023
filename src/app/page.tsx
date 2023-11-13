@@ -57,7 +57,7 @@ export default function Home() {
       setRequiredType(requiredType);
     };
     handleAsync();
-  });
+  }, []);
 
   useEffect(() => {
     const handleVcsChange = async (vcs: QueryCredentialsRequestResult[]) => {
