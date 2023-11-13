@@ -1,12 +1,15 @@
 'use client';
 import { useUserStore } from '@/lib/store';
 import { getUserBy } from '@/lib/supabase';
-import { enableMasca } from '@blockchain-lab-um/masca-connector';
+import {
+  enableMasca,
+  AvailableMethods,
+  MascaApi,
+} from '@blockchain-lab-um/masca-connector';
 import { isError } from '@blockchain-lab-um/utils';
 import Image from 'next/image';
 import Link from 'next/link';
 import DropdownMenu from '../Dropdown';
-import { AvailableMethods } from '@blockchain-lab-um/masca-types';
 import { useState } from 'react';
 
 export const Navbar = (props: any) => {
@@ -46,8 +49,10 @@ export const Navbar = (props: any) => {
     const addresses = await window.ethereum.request({
       method: 'eth_requestAccounts',
     });
-    const masca = await enableMasca((addresses as string[])[0], {
+    const address = (addresses as string[])[0];
+    const masca = await enableMasca(address, {
       supportedMethods: ['did:ethr', 'did:pkh'],
+      version: process.env.NEXT_PUBLIC_MASCA_VERSION,
     });
 
     if (isError(masca)) {
@@ -57,9 +62,23 @@ export const Navbar = (props: any) => {
     }
 
     const api = masca.data.getMascaApi();
+    setApi(api);
+    window.ethereum.on('accountsChanged', async (...accounts) => {
+      await handleConnected(accounts as string[], api);
+    });
+    handleConnected(addresses as string[], api);
+  };
+
+  const handleConnected = async (accounts: string[], api: MascaApi) => {
+    const setAccountRes = await api.setCurrentAccount({
+      account: accounts[0],
+    });
+    if (isError(setAccountRes)) {
+      console.error(setAccountRes.error);
+      return;
+    }
     const did = await api.getDID();
     const method = await api.getSelectedMethod();
-    setApi(api);
     setMethod(method.success ? method.data : '');
     setConnected(true);
     if (isError(did)) {
@@ -69,6 +88,7 @@ export const Navbar = (props: any) => {
     }
     const user = await getUserBy({ col: 'did', value: did.data });
     if (user) setUser(user);
+
     setDid(did.data);
     setConnecting(false);
   };

@@ -3,7 +3,7 @@ import { getAgent } from '../veramoSetup';
 import { MinimalImportableKey } from '@veramo/core';
 import { randomUUID } from 'crypto';
 import { ADDRESS, ISSUER, PRIVATE_KEY, REQUIRED_TYPE } from '../constants';
-import { keccak256 } from 'ethers';
+// import { keccak256 } from 'ethers';
 
 export async function GET(request: Request) {
   return NextResponse.json(
@@ -18,14 +18,15 @@ export async function GET(request: Request) {
 }
 
 export async function POST(request: Request) {
-  const { name, password, did } = await request.json();
-  const passwordHash = keccak256(Buffer.from(password));
-  if (passwordHash !== process.env.PASSWORD_HASH) {
-    return NextResponse.json({
-      error: 'Invalid password',
-      status: 401,
-    });
-  }
+  // const { name, password, did } = await request.json();
+  const { name, did } = await request.json();
+  // const passwordHash = keccak256(Buffer.from(password));
+  // if (passwordHash !== process.env.PASSWORD_HASH) {
+  //   return NextResponse.json({
+  //     error: 'Invalid password',
+  //     status: 401,
+  //   });
+  // }
   const agent = await getAgent();
   const controllerKeyId = 'key-1';
   const method = 'did:ethr';
@@ -42,6 +43,7 @@ export async function POST(request: Request) {
       } as MinimalImportableKey,
     ],
   });
+  console.log(did);
   const vc = await agent.createVerifiableCredential({
     credential: {
       id: randomUUID(),

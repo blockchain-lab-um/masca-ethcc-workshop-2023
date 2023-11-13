@@ -1,6 +1,6 @@
 'use client';
 import VCCard from '@/components/VCCard';
-import type { QueryVCsRequestResult } from '@blockchain-lab-um/masca-types';
+import type { QueryCredentialsRequestResult } from '@blockchain-lab-um/masca-connector';
 import { isError } from '@blockchain-lab-um/utils';
 import type { W3CVerifiableCredential } from '@veramo/core';
 import { useEffect, useState } from 'react';
@@ -37,9 +37,9 @@ export default function Home() {
   }));
   const router = useRouter();
   const [hasValidVc, setHasValidVc] = useState(false);
-  const [vcs, setVcs] = useState<QueryVCsRequestResult[]>([]);
+  const [vcs, setVcs] = useState<QueryCredentialsRequestResult[]>([]);
   const [vcsQueried, setVcsQueried] = useState(false);
-  const [password, setPassword] = useState<string>('');
+  // const [password, setPassword] = useState<string>('');
   const [issuer, setIssuer] = useState<string>('');
   const [requiredType, setRequiredType] = useState<string>('');
   const [querying, setQuerying] = useState(false);
@@ -60,7 +60,7 @@ export default function Home() {
   }, []);
 
   useEffect(() => {
-    const handleVcsChange = async (vcs: QueryVCsRequestResult[]) => {
+    const handleVcsChange = async (vcs: QueryCredentialsRequestResult[]) => {
       setHasValidVc(false);
       vcs.forEach((vc) => {
         if (vc.data?.type?.includes(requiredType)) {
@@ -79,7 +79,7 @@ export default function Home() {
     }
     const filter = `$[?((@.data.type == "${requiredType}" || @.data.type.includes("${requiredType}")) && ((@.data.issuer == "${issuer}") || (@.data.issuer.id == "${issuer}")))]`;
     // An example of using JSONPath to filter VCs
-    const vcs = await api.queryVCs({
+    const vcs = await api.queryCredentials({
       filter: {
         type: 'JSONPath',
         filter,
@@ -99,9 +99,9 @@ export default function Home() {
     setUsername(e.target.value);
   };
 
-  const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    setPassword(e.target.value);
-  };
+  // const handlePasswordChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  //   setPassword(e.target.value);
+  // };
 
   const getVC = async () => {
     if (!api) {
@@ -124,15 +124,19 @@ export default function Home() {
       headers: {
         'Content-Type': 'application/json',
       },
-      body: JSON.stringify({ name: user.username, password, did }),
+      body: JSON.stringify({ name: user.username /*, password*/, did }),
     });
 
-    const credential = await response.json();
-    if (credential.status === 401) {
-      alert(credential.error);
+    const credentialResponse = await response.json();
+    if (credentialResponse.status === 401) {
+      alert(credentialResponse.error);
     }
 
-    const saveResult = await api.saveVC(credential.credential, {
+    console.log(
+      '🚀 ~ file: page.tsx:136 ~ getVC ~ credential.credential: ',
+      credentialResponse.credential
+    );
+    const saveResult = await api.saveCredential(credentialResponse.credential, {
       store: 'snap',
     });
     if (isError(saveResult)) {
@@ -142,7 +146,7 @@ export default function Home() {
 
     setVcs([
       ...vcs,
-      { data: credential.credential, metadata: saveResult.data[0] },
+      { data: credentialResponse.credential, metadata: saveResult.data[0] },
     ]);
     setHasValidVc(true);
   };
@@ -151,7 +155,7 @@ export default function Home() {
     if (!api) {
       return;
     }
-    const vp = await api.createVP({
+    const vp = await api.createPresentation({
       vcs: [vc],
       proofFormat: 'EthereumEip712Signature2021',
     });
@@ -182,7 +186,7 @@ export default function Home() {
     if (!api) {
       return;
     }
-    const deleteResult = await api.deleteVC(id);
+    const deleteResult = await api.deleteCredential(id);
     if (isError(deleteResult)) {
       console.error(deleteResult.error);
       return;
@@ -309,7 +313,7 @@ export default function Home() {
                         type="text"
                       />
                     </div>
-                    <div className="mt-4 flex justify-end gap-x-2">
+                    {/* <div className="mt-4 flex justify-end gap-x-2">
                       <label className="font-semibold text-gray-300">
                         Password
                       </label>
@@ -318,7 +322,7 @@ export default function Home() {
                         className="text-gray-800"
                         type="password"
                       />
-                    </div>
+                    </div> */}
                   </div>
                   <button
                     onClick={getVC}

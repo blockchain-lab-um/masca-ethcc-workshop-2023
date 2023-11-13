@@ -1,9 +1,9 @@
-import { QueryVCsRequestResult } from '@blockchain-lab-um/masca-types';
+import { QueryCredentialsRequestResult } from '@blockchain-lab-um/masca-connector';
 import { W3CVerifiableCredential } from '@veramo/core';
 import React from 'react';
 
 type VCCardProps = {
-  vc: QueryVCsRequestResult;
+  vc: QueryCredentialsRequestResult;
   deleteVC: (id: string) => void;
   createVP: (vc: W3CVerifiableCredential) => any;
 };
