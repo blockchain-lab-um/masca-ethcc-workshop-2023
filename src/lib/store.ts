@@ -1,4 +1,4 @@
-import { MascaApi } from '@blockchain-lab-um/masca-types';
+import { MascaApi } from '@blockchain-lab-um/masca-connector';
 import { create } from 'zustand';
 
 interface UserStore {
